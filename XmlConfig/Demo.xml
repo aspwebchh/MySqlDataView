@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<WindowGroups>
+  <WindowGroup Title="内容管理">
+    
+    <Window Type="SubmitData" Title="添加">
+      <Item Name="title" Title="标题" DataType="String"></Item>
+      <Item Name="content" Title="内容" DataType="String"></Item>
+      <Item Name="time" Title="时间" DataType="DateTime"></Item>
+      <Item Name="count" Title="数量" DataType="Int"></Item>
+      <Item Name="SubItem" DataType="Map" Title="子内容">
+        <Item Name="title" Title="标题" DataType="String"></Item>
+        <Item Name="content" Title="内容" DataType="String"></Item>
+      </Item>
+      <Item Name="SubItemList" DataType="List" Title="子内容列表">
+        <Item Name="title" Title="标题" DataType="String"></Item>
+        <Item Name="content" Title="内容" DataType="String"></Item>
+      </Item>
+    </Window>
+    
+    <Window Type="GetList" Title="列表">
+      <Item Name="title" Title="标题" DataType="String"></Item>
+      <Item Name="content" Title="内容" DataType="String"></Item>
+      <Item Name="time" Title="时间" DataType="DateTime"></Item>
+      <Item Name="count" Title="数量" DataType="Int"></Item>
+    </Window>
+  
+  </WindowGroup>
+</WindowGroups>
