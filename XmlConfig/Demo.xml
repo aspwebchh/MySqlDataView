@@ -3,7 +3,7 @@
 <WindowGroups>
   <WindowGroup Title="内容管理">
     
-    <Window Type="SubmitData" Title="添加">
+    <Window1 Type="SubmitData" Title="添加">
       <Item Name="title" Title="标题" DataType="String"></Item>
       <Item Name="content" Title="内容" DataType="String"></Item>
       <Item Name="time" Title="时间" DataType="DateTime"></Item>
@@ -16,7 +16,7 @@
         <Item Name="title" Title="标题" DataType="String"></Item>
         <Item Name="content" Title="内容" DataType="String"></Item>
       </Item>
-    </Window>
+    </Window1>
     
     <Window Type="GetList" Title="列表">
       <Item Name="title" Title="标题" DataType="String"></Item>

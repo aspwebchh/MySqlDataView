@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -23,6 +22,7 @@ namespace WebServiceCaller {
             InitializeComponent();
 
             var result = XmlConfigParser.Parse( @"C:\dev\web_service_caller\XmlConfig\Demo.xml" );
+
         }
     }
 }

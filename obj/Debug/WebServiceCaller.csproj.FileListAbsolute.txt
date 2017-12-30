@@ -26,3 +26,4 @@ C:\dev\web_service_caller\obj\Debug\MainWindow.baml
 C:\dev\web_service_caller\obj\Debug\WebServiceCaller.g.resources
 C:\dev\web_service_caller\obj\Debug\WebServiceCaller.Properties.Resources.resources
 C:\dev\web_service_caller\obj\Debug\WebServiceCaller.csproj.GenerateResource.Cache
+C:\dev\web_service_caller\obj\Debug\WebServiceCaller.csprojResolveAssemblyReference.cache
