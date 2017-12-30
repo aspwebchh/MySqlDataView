@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace WebServiceCaller.Logic {
-    enum WindowItemDataType {
+   public enum WindowItemDataType {
           Integer, String, DateTime,Map,List
     }
 }

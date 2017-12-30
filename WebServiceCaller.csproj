@@ -63,6 +63,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Logic\WindowObject.cs" />
+    <Compile Include="Logic\WindowGroup.cs" />
+    <Compile Include="Logic\WindowItem.cs" />
+    <Compile Include="Logic\WindowItemDataType.cs" />
+    <Compile Include="Logic\WindowType.cs" />
+    <Compile Include="Logic\XmlConfigParseError.cs" />
+    <Compile Include="Logic\XmlConfigParser.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

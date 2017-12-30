@@ -5,13 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace WebServiceCaller.Logic {
-    class WindowGroup {
+    public class WindowGroup {
+        public WindowGroup() {
+            this.Items = new List<WindowObject>();
+        }
         public string Title {
             get;set;
         }
 
-        public List<Window> Items {
-            get;set;
+        public List<WindowObject> Items {
+            get;
+            private set;
         }
     }
 }

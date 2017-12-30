@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace WebServiceCaller.Logic {
-    public enum WindowType {
-        GetList,SubmitData
+   public  class XmlConfigParseError : Exception{
+        public XmlConfigParseError( string msg ) : base(msg) {
+           
+        }
     }
 }

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WebServiceCaller.Logic;
 
 namespace WebServiceCaller {
     /// <summary>
@@ -20,6 +21,8 @@ namespace WebServiceCaller {
     public partial class MainWindow : Window {
         public MainWindow() {
             InitializeComponent();
+
+            var result = XmlConfigParser.Parse( @"C:\dev\web_service_caller\XmlConfig\Demo.xml" );
         }
     }
 }
