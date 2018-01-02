@@ -18,12 +18,14 @@ C:\dev\web_service_caller\obj\Debug\WebServiceCaller.exe
 C:\dev\web_service_caller\obj\Debug\WebServiceCaller.pdb
 C:\dev\web_service_caller\bin\Debug\WebServiceCaller.exe
 C:\dev\web_service_caller\bin\Debug\WebServiceCaller.pdb
-C:\dev\web_service_caller\obj\Debug\MainWindow.g.cs
 C:\dev\web_service_caller\obj\Debug\App.g.cs
 C:\dev\web_service_caller\obj\Debug\WebServiceCaller_MarkupCompile.cache
 C:\dev\web_service_caller\obj\Debug\WebServiceCaller_MarkupCompile.lref
-C:\dev\web_service_caller\obj\Debug\MainWindow.baml
 C:\dev\web_service_caller\obj\Debug\WebServiceCaller.g.resources
 C:\dev\web_service_caller\obj\Debug\WebServiceCaller.Properties.Resources.resources
 C:\dev\web_service_caller\obj\Debug\WebServiceCaller.csproj.GenerateResource.Cache
 C:\dev\web_service_caller\obj\Debug\WebServiceCaller.csprojResolveAssemblyReference.cache
+C:\dev\web_service_caller\obj\Debug\UIGroup.g.cs
+C:\dev\web_service_caller\obj\Debug\UIWindow.g.cs
+C:\dev\web_service_caller\obj\Debug\UIGroup.baml
+C:\dev\web_service_caller\obj\Debug\UIWindow.baml
