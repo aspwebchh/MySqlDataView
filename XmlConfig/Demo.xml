@@ -11,10 +11,12 @@
       <Item Name="SubItem" DataType="Map" Title="子内容">
         <Item Name="title" Title="标题" DataType="String"></Item>
         <Item Name="content" Title="内容" DataType="String"></Item>
+        <Item Name="content" Title="数量" DataType="Int"></Item>
       </Item>
       <Item Name="SubItemList" DataType="List" Title="子内容列表">
-        <Item Name="title" Title="标题" DataType="String"></Item>
-        <Item Name="content" Title="内容" DataType="String"></Item>
+        <Item Name="Title" Title="标题" DataType="String"></Item>
+        <Item Name="Content" Title="内容" DataType="String"></Item>
+        <Item Name="Count" Title="数量" DataType="Int"></Item>
       </Item>
     </Window>
     
