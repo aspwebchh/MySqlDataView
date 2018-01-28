@@ -13,21 +13,10 @@ using System.Windows.Shapes;
 using WebServiceCaller.Logic;
 using System.Windows.Forms.Integration;
 using System.Data;
+using MySql.Data.MySqlClient;
 
 
 namespace WebServiceCaller {
-    class TestData {
-        public string Title {
-            get; set;
-        }
-        public string Content {
-            get;set;
-        }
-
-        public string Count {
-            get;set;
-        }
-    }
     /// <summary>
     /// UIWindow.xaml 的交互逻辑
     /// </summary>
@@ -46,6 +35,9 @@ namespace WebServiceCaller {
                 this.InitFormPage();
             }
         }
+
+
+        #region
 
         private void InitFormPage() {
             foreach( var windowItem in this.windowInfo.Items ) {
@@ -107,23 +99,65 @@ namespace WebServiceCaller {
             listView.View = gridView;
 
             var testData = new List<object>();
-            testData.Add( new TestData {
-                Title = "title",
-                Content = "Content",
-                Count = "1"
-            } );
-            testData.Add( new TestData {
-                Title = "title",
-                Content = "Content",
-                Count = "1"
-            } );
             listView.ItemsSource = testData;
 
             return listView;
         }
 
-        private void InitListPage() {
+        #endregion
 
+        private void InitListPage() {
+            var listView = new System.Windows.Controls.ListView();
+            var gridView = new GridView();
+            foreach( var windowItem in windowInfo.Items ) {
+                var column = new GridViewColumn();
+                var titleTemplate = new TextBlock();
+                titleTemplate.Text = windowItem.Title;
+                titleTemplate.TextAlignment = TextAlignment.Left;
+                titleTemplate.Width = 200;
+                column.Header = titleTemplate;
+
+                var binding = new Binding();
+                binding.Path = new PropertyPath( windowItem.Name );
+                var dtpl = new DataTemplate();
+                var fef = new FrameworkElementFactory( typeof( TextBlock ) );
+                fef.SetBinding( TextBlock.TextProperty, binding );
+               // fef.SetValue( TextBlock.WidthProperty, 100.0 );
+                fef.SetValue( TextBlock.TextAlignmentProperty, TextAlignment.Center );
+                dtpl.VisualTree = fef;
+                column.CellTemplate = dtpl;
+                gridView.Columns.Add( column );
+            }
+            listView.View = gridView;
+
+
+            var testData = new List<object>();
+            //testData.Add( new {
+            //    title = "title",
+            //    content = "content",
+            //    add_time = DateTime.Now,
+            //    read_count = 100
+            //} );
+            //testData.Add( new {
+            //    title = "title",
+            //    content = "content",
+            //    add_time = DateTime.Now,
+            //    read_count = 100
+            //} );
+
+
+            dynamic obj = new System.Dynamic.ExpandoObject();
+            obj.title = "title";
+            obj.content = "content";
+            obj.add_time = DateTime.Now;
+            obj.read_count = 100;
+
+            testData.Add( obj );
+
+           // var dataList =  Common.DbHelperMySqL.Query( "select * from article limit 10" );
+
+            listView.ItemsSource = testData;
+            Content.Children.Add( listView );
         }
     }
 }

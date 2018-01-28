@@ -23,8 +23,8 @@
     <Window Type="GetList" Title="列表">
       <Item Name="title" Title="标题" DataType="String"></Item>
       <Item Name="content" Title="内容" DataType="String"></Item>
-      <Item Name="time" Title="时间" DataType="DateTime"></Item>
-      <Item Name="count" Title="数量" DataType="Int"></Item>
+      <Item Name="add_time" Title="时间" DataType="DateTime"></Item>
+      <Item Name="read_count" Title="数量" DataType="Int"></Item>
     </Window>
   
   </WindowGroup>
