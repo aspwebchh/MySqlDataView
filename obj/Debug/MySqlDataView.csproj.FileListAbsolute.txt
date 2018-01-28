@@ -15,4 +15,3 @@ C:\dev\web_service_caller\obj\Debug\WebServiceCaller.exe
 C:\dev\web_service_caller\obj\Debug\WebServiceCaller.pdb
 C:\dev\web_service_caller\bin\Debug\MySql.Data.dll
 C:\dev\web_service_caller\bin\Debug\MySql.Data.xml
-C:\dev\web_service_caller\obj\Debug\MySqlDataView.csprojResolveAssemblyReference.cache
