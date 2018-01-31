@@ -10,6 +10,11 @@ namespace WebServiceCaller.Logic {
         }
 
 
+        public string TableName {
+            get;
+            set;
+        }
+
         public string Title {
             get;set;
         }

@@ -21,28 +21,28 @@ namespace WebServiceCaller {
         public UIGroup() {
             InitializeComponent();
 
-            
-            var result = XmlConfigParser.Parse( @"C:\dev\web_service_caller\XmlConfig\Demo.xml" );
+            var config = XmlConfigParser.Parse( @"C:\dev\web_service_caller\XmlConfig\Demo.xml" );
 
-            foreach( var group in result ) {
-                var groupBox = new GroupBox();
-                groupBox.Header = group.Title;
+            //MessageBox.Show( string.Join( ",", config.Products.Select( item => item.ToString() ) ) );
 
-                var container = new WrapPanel();
-                foreach( var window in group.Items ) {
-                    var control = new Button();
-                    control.Content = window.Title;
-                    control.Click += delegate ( object sender, RoutedEventArgs e ) {
-                        var uiWindow = new UIWindow( window );
-                        uiWindow.Owner = this;
-                        uiWindow.ShowDialog();
-                    };
-                    container.Children.Add( control );
-                }
+            var group = config.WindowsGroup;
+            var groupBox = new GroupBox();
+            groupBox.Header = group.Title;
 
-                groupBox.Content = container;
-                Content.Children.Add( groupBox );
+            var container = new WrapPanel();
+            foreach( var window in group.Items ) {
+                var control = new Button();
+                control.Content = window.Title;
+                control.Click += delegate ( object sender, RoutedEventArgs e ) {
+                    var uiWindow = new UIWindow( window );
+                    uiWindow.Owner = this;
+                    uiWindow.ShowDialog();
+                };
+                container.Children.Add( control );
             }
+
+            groupBox.Content = container;
+            Content.Children.Add( groupBox );
         }
     }
 }

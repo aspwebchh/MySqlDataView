@@ -14,7 +14,7 @@ using WebServiceCaller.Logic;
 using System.Windows.Forms.Integration;
 using System.Data;
 using MySql.Data.MySqlClient;
-
+using WebServiceCaller.Common;
 
 namespace WebServiceCaller {
     /// <summary>
@@ -130,33 +130,10 @@ namespace WebServiceCaller {
             }
             listView.View = gridView;
 
+            var dataList = DbHelperMySqL.Query( "select * from article limit 20" );
+            var objectList = Data2Object.Convert( dataList.Tables[0] );
 
-            var testData = new List<object>();
-            //testData.Add( new {
-            //    title = "title",
-            //    content = "content",
-            //    add_time = DateTime.Now,
-            //    read_count = 100
-            //} );
-            //testData.Add( new {
-            //    title = "title",
-            //    content = "content",
-            //    add_time = DateTime.Now,
-            //    read_count = 100
-            //} );
-
-
-            dynamic obj = new System.Dynamic.ExpandoObject();
-            obj.title = "title";
-            obj.content = "content";
-            obj.add_time = DateTime.Now;
-            obj.read_count = 100;
-
-            testData.Add( obj );
-
-           // var dataList =  Common.DbHelperMySqL.Query( "select * from article limit 10" );
-
-            listView.ItemsSource = testData;
+            listView.ItemsSource = objectList;
             Content.Children.Add( listView );
         }
     }

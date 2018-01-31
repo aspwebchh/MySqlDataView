@@ -8,27 +8,59 @@ using System.Windows;
 
 namespace WebServiceCaller.Logic {
     public class XmlConfigParser {
-        public static List<WindowGroup> Parse( string xmlFilePath ) {
 
+        public static Config Parse( string xmlFilePath ) {
             var doc = new XmlDocument();
             doc.Load( xmlFilePath );
-            return GetGroups( doc );
+
+            var windowsGroup = GetGroups( doc );
+            var products = GetProducts( doc );
+
+            var config = new Config();
+            config.WindowsGroup = windowsGroup;
+            config.Products = products;
+            return config;
         }
 
-        private static List<WindowGroup> GetGroups( XmlDocument doc) {
-            var result = new List<WindowGroup>();
-
-            var groupsElements = doc.GetElementsByTagName( "WindowGroups" );
-
-            if( groupsElements.Count > 0 ) {
-                var unique = groupsElements[ 0 ];
-                foreach( XmlNode groupItemElement in unique ) {
-                    result.Add( GetGroup( groupItemElement ) );
+        #region
+        private static List<Product> GetProducts( XmlDocument doc ) {
+            var products = new List<Product>();
+            var productsElement = doc.GetElementsByTagName( "Products" );
+            if( productsElement.Count > 0 ) {
+                var childNodes = productsElement[ 0 ].ChildNodes;
+                if( childNodes.Count == 0 ) {
+                    throw new XmlConfigParseError( "Product节点不存在" );
+                }
+                foreach( XmlNode ele in childNodes ) {
+                    products.Add( GetProduct( ele ) );
                 }
             } else {
-                throw new XmlConfigParseError( "WindowGroups节点不存在" );
+                throw new XmlConfigParseError( "Products节点不存在" );
             }
-            return result;
+            return products;
+        }
+
+        private static Product GetProduct( XmlNode node ) {
+            var ele = node as XmlElement;
+            var name = ele.GetAttribute( "Name" );
+            var connectionString = ele.GetAttribute( "ConnectionString" );
+
+            var product = new Product();
+            product.Name = name;
+            product.ConnectionString = connectionString;
+            return product;
+        }
+        #endregion;
+
+        #region
+        private static WindowGroup GetGroups( XmlDocument doc) {
+            var groupElements = doc.GetElementsByTagName( "WindowGroup" );
+            if( groupElements.Count > 0 ) {
+                var unique = groupElements[ 0 ];
+                return GetGroup( unique );
+            } else {
+                throw new XmlConfigParseError( "WindowGroup节点不存在" );
+            }
         }
 
         private static WindowGroup GetGroup(XmlNode groupElement) {
@@ -67,8 +99,10 @@ namespace WebServiceCaller.Logic {
                 var ele = windowElement as XmlElement;
                 var title = ele.GetAttribute( "Title" );
                 var type = ele.GetAttribute( "Type" );
+                var tableName = ele.GetAttribute( "TableName" );
                 window.Title = title;
                 window.Type = WindowObject.GetType( type );
+                window.TableName = tableName;
                 if( windowElement.ChildNodes.Count == 0 ) {
                     throw new XmlConfigParseError( "Window节点必须存在子节点" );
                 }
@@ -112,5 +146,7 @@ namespace WebServiceCaller.Logic {
             }
             return item;
         }
+
+        #endregion
     }
 }
