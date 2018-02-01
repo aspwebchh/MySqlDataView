@@ -15,7 +15,20 @@ namespace WebServiceCaller.Common {
     /// </summary>
     public abstract class DbHelperMySqL {
         //数据库连接字符串(web.config来配置)，可以动态更改connectionString支持多数据库.		
-        public static string connectionString = "Data Source=chhblog.com;User ID=x;Password=x;DataBase=x;allow zero datetime=true;Port=3306;Use Procedure Bodies=false;Charset=utf8;";
+        //public static string connectionString = "Data Source=chhblog.com;User ID=chhblog_dev;Password=chhblog_dev_fk;DataBase=chhblog;allow zero datetime=true;Port=3306;Use Procedure Bodies=false;Charset=utf8;";
+
+        private static string connectionString;
+
+        public static string ConnectionString {
+            get {
+                return connectionString;
+            }
+            set {
+                connectionString = value;
+            }
+        }
+
+
         public DbHelperMySqL() {
         }
 

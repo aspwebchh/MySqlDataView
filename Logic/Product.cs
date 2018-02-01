@@ -14,8 +14,12 @@ namespace WebServiceCaller.Logic {
             get; set;
         }
 
+        public String ID {
+            get;set;
+        }
+
         public override string ToString() {
-            return "name:" + Name + "\n" + "connectionString:" + ConnectionString;
+            return  "name:" + Name + "\n" + "connectionString:" + ConnectionString + "\nID：" + ID ;
         }
     }
 }

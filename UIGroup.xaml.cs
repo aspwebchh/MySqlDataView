@@ -23,7 +23,19 @@ namespace WebServiceCaller {
 
             var config = XmlConfigParser.Parse( @"C:\dev\web_service_caller\XmlConfig\Demo.xml" );
 
-            //MessageBox.Show( string.Join( ",", config.Products.Select( item => item.ToString() ) ) );
+            foreach( var product in config.Products ) {
+                var button = new Button();
+                button.Content = product.Name;
+                button.Margin = new Thickness( 0, 0, 10, 0 );
+                button.Click += delegate ( object sender, RoutedEventArgs e ) {
+                    var content = new UIContent(product,config.WindowsGroup);
+                    content.Owner = this;
+                    content.ShowDialog();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                };
+                Content.Children.Add( button );
+            }
+
+            /*
 
             var group = config.WindowsGroup;
             var groupBox = new GroupBox();
@@ -42,7 +54,7 @@ namespace WebServiceCaller {
             }
 
             groupBox.Content = container;
-            Content.Children.Add( groupBox );
+            Content.Children.Add( groupBox );*/
         }
     }
 }

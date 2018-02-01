@@ -44,8 +44,10 @@ namespace WebServiceCaller.Logic {
             var ele = node as XmlElement;
             var name = ele.GetAttribute( "Name" );
             var connectionString = ele.GetAttribute( "ConnectionString" );
+            var id = ele.GetAttribute( "ID" );
 
             var product = new Product();
+            product.ID = id;
             product.Name = name;
             product.ConnectionString = connectionString;
             return product;

@@ -67,10 +67,22 @@
     <Compile Include="Common\Data2Object.cs" />
     <Compile Include="Common\DbHelperMySql.cs" />
     <Compile Include="Logic\Config.cs" />
+    <Compile Include="Logic\Pager.cs" />
     <Compile Include="Logic\Product.cs" />
+    <Compile Include="UIContent.xaml.cs">
+      <DependentUpon>UIContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIWindow.xaml.cs">
       <DependentUpon>UIWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Style.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UIGroup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
