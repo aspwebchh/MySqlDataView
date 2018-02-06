@@ -102,9 +102,13 @@ namespace WebServiceCaller.Logic {
                 var title = ele.GetAttribute( "Title" );
                 var type = ele.GetAttribute( "Type" );
                 var tableName = ele.GetAttribute( "TableName" );
+                var sortField = ele.GetAttribute( "SortField" );
+                var sortMode = ele.GetAttribute( "SortMode" );
                 window.Title = title;
                 window.Type = WindowObject.GetType( type );
                 window.TableName = tableName;
+                window.SortField = sortField;
+                window.SortMode = sortMode;
                 if( windowElement.ChildNodes.Count == 0 ) {
                     throw new XmlConfigParseError( "Window节点必须存在子节点" );
                 }

@@ -23,6 +23,14 @@ namespace WebServiceCaller.Logic {
             get;set;
         }
 
+        public string SortField {
+            get;set;
+        }
+
+        public string SortMode {
+            get;set;
+        }
+
         public List<WindowItem> Items {
             get;
             private set;

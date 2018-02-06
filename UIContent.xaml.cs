@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 using System.Threading;
 using WebServiceCaller.Logic;
 using WebServiceCaller.Common;
+using System.Data;
 
 namespace WebServiceCaller {
     /// <summary>
@@ -21,7 +22,7 @@ namespace WebServiceCaller {
     public partial class UIContent : Window {
         private Product product;
         private WindowGroup windowGroup;
-        private Pager pager;
+        private WindowObject currWindow;
 
         public UIContent( Product product, WindowGroup group ) {
             this.product = product;
@@ -31,7 +32,11 @@ namespace WebServiceCaller {
             InitializeComponent();
 
             this.InitNavMenu();
-            this.pager = new Pager( this );
+        }
+
+        private void SetCurrTabState(WindowObject window) {
+            currWindow = window;
+            Pager.Get(product, window, this).Render();
         }
 
         private void InitNavMenu() {
@@ -41,6 +46,8 @@ namespace WebServiceCaller {
                 treeViewItem.Header = item.Title;
                 treeViewItem.Style = Resources[ "TreeViewItem" ] as Style;
                 treeViewItem.Selected += delegate ( object sender, RoutedEventArgs e ) {
+                    SetCurrTabState(item);
+
                     TabItem tabItem;
                     if( tabItems.ContainsKey( item ) ) {
                         tabItem = tabItems[ item ];
@@ -59,6 +66,9 @@ namespace WebServiceCaller {
             var tabItem = new TabItem();
             tabItem.Header = window.Title;
             tabItem.Content = NewTabItemList( window );
+            tabItem.MouseLeftButtonUp += delegate ( object sender, MouseButtonEventArgs e ) {
+                SetCurrTabState( window );
+            };
             return tabItem;
         }
 
@@ -87,32 +97,45 @@ namespace WebServiceCaller {
             }
             listView.View = gridView;
 
+            Pager pager = Pager.NewOrGet( product, currWindow, this );
 
-            ThreadPool.QueueUserWorkItem( delegate( object state ) {
-                var dataList = DbHelperMySqL.Query( "select * from "+ window.TableName +" limit 20" );
-                var objectList = Data2Object.Convert( dataList.Tables[ 0 ] );
-                Dispatcher.Invoke( delegate () {
-                    listView.ItemsSource = objectList;
+            var fields = string.Join(",", window.Items.Select( item => item.Name ).ToArray());
+            pager.OnPageChanged += delegate () {
+                ThreadPool.QueueUserWorkItem( delegate ( object state ) {
+                    var sortString = window.SortField + " " + window.SortMode;
+                    var dataListTask = DbHelperMySqL.QueryAsync( "select "+ fields + " from " + window.TableName + " order by " + sortString + " limit " + pager.GetLimit() );
+                    var dataCountTask = DbHelperMySqL.GetSingleAsync( "select count(*) from " + window.TableName );
+                    var dataList = dataListTask.Result;
+                    var dataCount = dataCountTask.Result;
+                    var objectList = Data2Object.Convert( dataList.Tables[ 0 ] );
+                    Dispatcher.Invoke( (Action)delegate () {
+                        pager.SetDataCount( int.Parse( dataCount.ToString() ) );
+                        pager.Render();
+                        listView.ItemsSource = objectList;
+                    } );
                 } );
-            } );
+            };
+
+            pager.PageChange();
+
             return listView;
         }
 
 
         private void FirstPageButton_Click( object sender, RoutedEventArgs e ) {
-           
+            Pager.Get( product, currWindow , this).First();
         }
 
         private void PreviousPageButton_Click( object sender, RoutedEventArgs e ) {
-            
+            Pager.Get( product, currWindow , this).Prev();
         }
 
         private void NextPageButton_Click( object sender, RoutedEventArgs e ) {
-           
+            Pager.Get( product, currWindow , this).Next();
         }
 
         private void LastPageButton_Click( object sender, RoutedEventArgs e ) {
-            
+            Pager.Get( product, currWindow , this).Last();
         }
     }
 }

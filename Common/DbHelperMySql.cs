@@ -7,6 +7,8 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Data;
 using MySql.Data.MySqlClient;
+using System.Threading;
+using System.Windows;
 
 namespace WebServiceCaller.Common {
     /// <summary>
@@ -263,6 +265,7 @@ namespace WebServiceCaller.Common {
             }
         }
 
+
         /// <summary>
         /// 执行一条计算查询结果语句，返回查询结果（object）。
         /// </summary>
@@ -339,6 +342,20 @@ namespace WebServiceCaller.Common {
                 }
                 return ds;
             }
+        }
+
+        public static Task<DataSet> QueryAsync( string SQLString ) {
+            return Task.Factory.StartNew( () => {
+                var result = Query( SQLString );
+                return result;
+            } );
+        }
+
+        public static Task<object> GetSingleAsync( string SQLString ) {
+            return Task.Factory.StartNew( () => {
+                var result = GetSingle( SQLString );
+                return result;
+            } );
         }
 
         public static DataSet Query( string SQLString ) {
