@@ -133,9 +133,11 @@ namespace WebServiceCaller.Logic {
                 var name = ele.GetAttribute( "Name" );
                 var title = ele.GetAttribute( "Title" );
                 var dataType = ele.GetAttribute( "DataType" );
+                var itemType = ele.GetAttribute( "ItemType" );
                 item.Name = name;
                 item.Title = title;
-                item.DataType = WindowItem.GetType( dataType );
+                item.DataType = WindowItem.GetDataType( dataType );
+                item.ItemType = WindowItem.GetItemType( itemType );
 
                 if( item.DataType == WindowItemDataType.Map || item.DataType == WindowItemDataType.List) {
                     var childItemElements = windowItemElement.ChildNodes;

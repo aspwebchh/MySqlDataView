@@ -19,6 +19,11 @@ namespace WebServiceCaller.Logic {
             set;
         }
 
+        public WindowItemType ItemType {
+            get;
+            set;
+        }
+
         public WindowItemDataType DataType {
             get;set;
         }
@@ -28,7 +33,7 @@ namespace WebServiceCaller.Logic {
             private set;
         }
 
-        public static WindowItemDataType GetType( string dataType ) {
+        public static WindowItemDataType GetDataType( string dataType ) {
             if( dataType == "String" ) {
                 return WindowItemDataType.String;
             } else if( dataType == "Int" ) {
@@ -40,7 +45,17 @@ namespace WebServiceCaller.Logic {
             } else if( dataType == "List" ) {
                 return WindowItemDataType.List;
             } else {
-                throw new XmlConfigParseError( "Item类型不存在" );
+                throw new XmlConfigParseError( "DataType类型不存在" );
+            }
+        }
+
+        public static WindowItemType GetItemType(string itemType) {
+            if( itemType == "FilterItem" ) {
+                return WindowItemType.FilterItem;
+            } else if( itemType == "ListItem" ) {
+                return WindowItemType.ListItem;
+            } else {
+                throw new XmlConfigParseError( "ItemType类型不存在" );
             }
         }
     }

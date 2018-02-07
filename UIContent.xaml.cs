@@ -23,6 +23,7 @@ namespace WebServiceCaller {
         private Product product;
         private WindowGroup windowGroup;
         private WindowObject currWindow;
+        private String where = "";
 
         public UIContent( Product product, WindowGroup group ) {
             this.product = product;
@@ -63,20 +64,68 @@ namespace WebServiceCaller {
         }
 
         private TabItem NewTabItem( WindowObject window ) {
+            var stackPannel = new StackPanel();
+            stackPannel.Children.Add( NewFilterForm( window  ) );
+            stackPannel.Children.Add( NewTabItemList( window ) );
             var tabItem = new TabItem();
             tabItem.Header = window.Title;
-            tabItem.Content = NewTabItemList( window );
+            tabItem.Content = stackPannel;
             tabItem.MouseLeftButtonUp += delegate ( object sender, MouseButtonEventArgs e ) {
                 SetCurrTabState( window );
             };
             return tabItem;
         }
 
+        private Dictionary<string, string> GetFilterFormFieldResult(UIElement element) {
+            var result = new Dictionary<string, string>();
+            if( element is TextBox ) {
+                var txtbox = element as TextBox;
+                result[ txtbox.Name ] = txtbox.Text;
+            } else if( element is WrapPanel ) {
+                var childs = ( element as WrapPanel ).Children;
+                foreach( UIElement item in childs ) {
+                    var itemResult = GetFilterFormFieldResult( item );
+                    foreach( var key in itemResult.Keys ) {
+                        result[ key ] = itemResult[ key ];
+                    }
+                }
+            }
+            return result;
+        }
+
+        private WrapPanel NewFilterForm( WindowObject window ) {
+            var wrapPannel = new WrapPanel();
+            var filterItems = window.FilterItems;
+            foreach( var item in filterItems ) {
+                wrapPannel.Children.Add( NewFilterFormField( item ) );
+            }
+            var filterBtn = new Button();
+            filterBtn.Content = "筛选";
+            filterBtn.Width = 50;
+            filterBtn.Click += delegate ( object sender, RoutedEventArgs e ) {
+                var result = GetFilterFormFieldResult( wrapPannel );
+            };
+            wrapPannel.Children.Add( filterBtn );
+            return wrapPannel;
+        }
+
+        private WrapPanel NewFilterFormField(WindowItem windowItem) {
+            var wrapPannel = new WrapPanel();
+            var title = new TextBlock();
+            title.Text = windowItem.Title;
+            title.Width = 100;
+            wrapPannel.Children.Add( title );
+            var content = new TextBox();
+            content.Name = windowItem.Name;
+            content.Width = 200;
+            wrapPannel.Children.Add( content );
+            return wrapPannel;
+        }
 
         private ListView NewTabItemList( WindowObject window ) {
             var listView = new System.Windows.Controls.ListView();
             var gridView = new GridView();
-            foreach( var windowItem in window.Items ) {
+            foreach( var windowItem in window.ListItems ) {
                 var column = new GridViewColumn();
                 var titleTemplate = new TextBlock();
                 titleTemplate.Text = windowItem.Title;
@@ -99,11 +148,17 @@ namespace WebServiceCaller {
 
             Pager pager = Pager.NewOrGet( product, currWindow, this );
 
-            var fields = string.Join(",", window.Items.Select( item => item.Name ).ToArray());
+            var fields = string.Join(",", window.ListItems.Select( item => item.Name ).ToArray());
             pager.OnPageChanged += delegate () {
                 ThreadPool.QueueUserWorkItem( delegate ( object state ) {
                     var sortString = window.SortField + " " + window.SortMode;
-                    var dataListTask = DbHelperMySqL.QueryAsync( "select "+ fields + " from " + window.TableName + " order by " + sortString + " limit " + pager.GetLimit() );
+                    var whereString = "";
+                    if( string.IsNullOrEmpty( where ) ) {
+                        whereString = " 1 = 1 ";
+                    } else {
+                        whereString = where;
+                    }
+                    var dataListTask = DbHelperMySqL.QueryAsync( "select "+ fields + " from " + window.TableName + " where " + whereString + " order by " + sortString + " limit " + pager.GetLimit() );
                     var dataCountTask = DbHelperMySqL.GetSingleAsync( "select count(*) from " + window.TableName );
                     var dataList = dataListTask.Result;
                     var dataCount = dataCountTask.Result;

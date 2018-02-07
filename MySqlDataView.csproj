@@ -69,6 +69,7 @@
     <Compile Include="Logic\Config.cs" />
     <Compile Include="Logic\Pager.cs" />
     <Compile Include="Logic\Product.cs" />
+    <Compile Include="Logic\WindowItemType.cs" />
     <Compile Include="UIContent.xaml.cs">
       <DependentUpon>UIContent.xaml</DependentUpon>
     </Compile>

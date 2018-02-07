@@ -19,6 +19,7 @@
             </Style>
         </ResourceDictionary>
     </Window.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition>
@@ -30,9 +31,8 @@
         </Grid.ColumnDefinitions>
 
         <TreeView x:Name="NavMenu" HorizontalAlignment="Left" Grid.Row="0" Grid.Column="0" Width="190" Padding="10">
-
+            
         </TreeView>
-
 
             <Grid Grid.Column="1" Grid.Row="0">
                 <Grid.RowDefinitions>

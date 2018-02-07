@@ -36,6 +36,18 @@ namespace WebServiceCaller.Logic {
             private set;
         }
 
+        public List<WindowItem> ListItems {
+            get {
+                return Items.Where( item => item.ItemType == WindowItemType.ListItem ).ToList();
+            }
+        }
+
+        public List<WindowItem> FilterItems {
+            get {
+                return Items.Where( item => item.ItemType == WindowItemType.FilterItem ).ToList();
+            }
+        }
+
         public static WindowType GetType( string type ) {
             if( type == "GetList" ) {
                 return WindowType.GetList;
