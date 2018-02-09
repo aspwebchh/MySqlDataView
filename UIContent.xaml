@@ -44,14 +44,7 @@
                     </ColumnDefinition>
                 </Grid.ColumnDefinitions>
 
-            <TabControl Name="Contents" Grid.Row="0" Grid.Column="0">
-                <TabControl.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="关闭"></MenuItem>
-                    </ContextMenu>
-                </TabControl.ContextMenu>
-            </TabControl>
-
+            <TabControl Name="Contents" Grid.Row="0" Grid.Column="0"></TabControl>
 
             <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center">
                 <Button x:Name="FirstPageButton" Margin="5,0" Click="FirstPageButton_Click">

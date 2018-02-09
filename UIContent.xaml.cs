@@ -53,7 +53,10 @@ namespace WebServiceCaller {
                     if( tabItems.ContainsKey( item ) ) {
                         tabItem = tabItems[ item ];
                     } else {
-                        tabItem = NewTabItem( item );
+                        tabItem = NewTabItem( item,delegate(TabItem removeTarget) {
+                            Contents.Items.Remove( removeTarget );
+                            tabItems.Remove( item );
+                        } );
                         tabItems.Add( item, tabItem );
                         Contents.Items.Add( tabItem );
                     }
@@ -63,12 +66,25 @@ namespace WebServiceCaller {
             }
         }
 
-        private TabItem NewTabItem( WindowObject window ) {
+        private TabItem NewTabItem( WindowObject window, Action<TabItem> onRemove ) {
             var stackPannel = new StackPanel();
             stackPannel.Children.Add( NewFilterForm( window  ) );
             stackPannel.Children.Add( NewTabItemList( window ) );
             var tabItem = new TabItem();
-            tabItem.Header = window.Title;
+
+            var contextMenu = new ContextMenu();
+            var closeItem = new MenuItem();
+            closeItem.Header = "关闭";
+            closeItem.Click += delegate ( object sender, RoutedEventArgs e ) {
+                onRemove( tabItem );
+            };
+            contextMenu.Items.Add( closeItem );
+
+            TextBlock tabTitle = new TextBlock();
+            tabTitle.Text = window.Title;
+            tabTitle.ContextMenu = contextMenu;
+
+            tabItem.Header = tabTitle;
             tabItem.Content = stackPannel;
             tabItem.MouseLeftButtonUp += delegate ( object sender, MouseButtonEventArgs e ) {
                 SetCurrTabState( window );
@@ -80,7 +96,9 @@ namespace WebServiceCaller {
             var result = new Dictionary<string, string>();
             if( element is TextBox ) {
                 var txtbox = element as TextBox;
-                result[ txtbox.Name ] = txtbox.Text;
+                if( !string.IsNullOrEmpty( txtbox.Text.Trim() ) ) {
+                    result[ txtbox.Name ] = txtbox.Text;
+                }
             } else if( element is WrapPanel ) {
                 var childs = ( element as WrapPanel ).Children;
                 foreach( UIElement item in childs ) {
@@ -104,6 +122,18 @@ namespace WebServiceCaller {
             filterBtn.Width = 50;
             filterBtn.Click += delegate ( object sender, RoutedEventArgs e ) {
                 var result = GetFilterFormFieldResult( wrapPannel );
+                if( result.Count == 0 ) {
+                    where = "";
+                } else {
+                    where = " 1=1 ";
+                    foreach( var key in result.Keys ) {
+                        var val = result[ key ];
+                        where += " and " + key + "=" + "'" + val + "'";
+                    }
+                }
+                var pager = Pager.Get( product, window, this );
+                pager.SetCurrPageIndex( 1 );
+                pager.PageChange();
             };
             wrapPannel.Children.Add( filterBtn );
             return wrapPannel;
@@ -123,7 +153,7 @@ namespace WebServiceCaller {
         }
 
         private ListView NewTabItemList( WindowObject window ) {
-            var listView = new System.Windows.Controls.ListView();
+            var listView = new ListView();
             var gridView = new GridView();
             foreach( var windowItem in window.ListItems ) {
                 var column = new GridViewColumn();
