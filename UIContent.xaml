@@ -12,14 +12,14 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary  Source="Style.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            
+
             <Style TargetType="{x:Type Button}">
                 <Setter Property="Width" Value="22"/>
                 <Setter Property="Height" Value="22"/>
             </Style>
         </ResourceDictionary>
     </Window.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition>
@@ -31,20 +31,22 @@
         </Grid.ColumnDefinitions>
 
         <TreeView x:Name="NavMenu" HorizontalAlignment="Left" Grid.Row="0" Grid.Column="0" Width="190" Padding="10">
-            
+
         </TreeView>
 
-            <Grid Grid.Column="1" Grid.Row="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition Height="40"></RowDefinition>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition>
-                    </ColumnDefinition>
-                </Grid.ColumnDefinitions>
+        <Grid Grid.Column="1" Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition Height="40"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition>
+                </ColumnDefinition>
+            </Grid.ColumnDefinitions>
 
-            <TabControl Name="Contents" Grid.Row="0" Grid.Column="0"></TabControl>
+            <TabControl Name="Contents" Grid.Row="0" Grid.Column="0">
+
+            </TabControl>
 
             <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center">
                 <Button x:Name="FirstPageButton" Margin="5,0" Click="FirstPageButton_Click">
@@ -79,6 +81,6 @@
                 </TextBlock>
             </StackPanel>
         </Grid>
-           
+
     </Grid>
 </Window>

@@ -68,10 +68,11 @@ namespace WebServiceCaller {
 
         private TabItem NewTabItem( WindowObject window, Action<TabItem> onRemove ) {
             var stackPannel = new StackPanel();
-            stackPannel.Children.Add( NewFilterForm( window  ) );
-            stackPannel.Children.Add( NewTabItemList( window ) );
+            var form = NewFilterForm(window);
+            var list = NewTabItemList(window);
+            stackPannel.Children.Add(form);
+            stackPannel.Children.Add( list );
             var tabItem = new TabItem();
-
             var contextMenu = new ContextMenu();
             var closeItem = new MenuItem();
             closeItem.Header = "关闭";
@@ -89,53 +90,43 @@ namespace WebServiceCaller {
             tabItem.MouseLeftButtonUp += delegate ( object sender, MouseButtonEventArgs e ) {
                 SetCurrTabState( window );
             };
+            tabItem.Loaded += delegate ( object sender, RoutedEventArgs e ) {
+                list.Height = Contents.ActualHeight - form.ActualHeight - tabItem.ActualHeight;
+            };
             return tabItem;
         }
 
-        private Dictionary<string, string> GetFilterFormFieldResult(UIElement element) {
-            var result = new Dictionary<string, string>();
-            if( element is TextBox ) {
-                var txtbox = element as TextBox;
-                if( !string.IsNullOrEmpty( txtbox.Text.Trim() ) ) {
-                    result[ txtbox.Name ] = txtbox.Text;
-                }
-            } else if( element is WrapPanel ) {
-                var childs = ( element as WrapPanel ).Children;
-                foreach( UIElement item in childs ) {
-                    var itemResult = GetFilterFormFieldResult( item );
-                    foreach( var key in itemResult.Keys ) {
-                        result[ key ] = itemResult[ key ];
-                    }
-                }
-            }
-            return result;
-        }
 
         private WrapPanel NewFilterForm( WindowObject window ) {
             var wrapPannel = new WrapPanel();
             var filterItems = window.FilterItems;
             foreach( var item in filterItems ) {
-                wrapPannel.Children.Add( NewFilterFormField( item ) );
+                wrapPannel.Children.Add(NewFilterFormField(item));
             }
             var filterBtn = new Button();
             filterBtn.Content = "筛选";
             filterBtn.Width = 50;
             filterBtn.Click += delegate ( object sender, RoutedEventArgs e ) {
-                var result = GetFilterFormFieldResult( wrapPannel );
-                if( result.Count == 0 ) {
-                    where = "";
-                } else {
-                    where = " 1=1 ";
-                    foreach( var key in result.Keys ) {
-                        var val = result[ key ];
-                        where += " and " + key + "=" + "'" + val + "'";
-                    }
-                }
-                var pager = Pager.Get( product, window, this );
-                pager.SetCurrPageIndex( 1 );
+                where = WhereGenerator.GetWhere(wrapPannel, window.FilterItems);
+                var pager = Pager.Get(product, window, this);
+                pager.SetCurrPageIndex(1);
                 pager.PageChange();
             };
-            wrapPannel.Children.Add( filterBtn );
+            wrapPannel.Children.Add(filterBtn);
+
+
+            var resetBtn = new Button();
+            resetBtn.Content = "重置";
+            resetBtn.Width = 50;
+            resetBtn.Click += delegate ( object sender, RoutedEventArgs e ) {
+                WhereGenerator.ClearFilterFormField(wrapPannel);
+                where = "";
+                var pager = Pager.Get(product, window, this);
+                pager.SetCurrPageIndex(1);
+                pager.PageChange();
+            };
+            wrapPannel.Children.Add(resetBtn);
+
             return wrapPannel;
         }
 
@@ -189,7 +180,7 @@ namespace WebServiceCaller {
                         whereString = where;
                     }
                     var dataListTask = DbHelperMySqL.QueryAsync( "select "+ fields + " from " + window.TableName + " where " + whereString + " order by " + sortString + " limit " + pager.GetLimit() );
-                    var dataCountTask = DbHelperMySqL.GetSingleAsync( "select count(*) from " + window.TableName );
+                    var dataCountTask = DbHelperMySqL.GetSingleAsync( "select count(*) from " + window.TableName + " where " + whereString);
                     var dataList = dataListTask.Result;
                     var dataCount = dataCountTask.Result;
                     var objectList = Data2Object.Convert( dataList.Tables[ 0 ] );
@@ -202,7 +193,6 @@ namespace WebServiceCaller {
             };
 
             pager.PageChange();
-
             return listView;
         }
 

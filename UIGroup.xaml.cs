@@ -24,7 +24,7 @@ namespace WebServiceCaller {
         public UIGroup() {
             InitializeComponent();
 
-            var config = XmlConfigParser.Parse( @"C:\dev\web_service_caller\XmlConfig\Demo.xml" );
+            var config = XmlConfigParser.Parse(@"C:\dev\MySqlDataView\XmlConfig\Demo.xml");
 
             foreach( var product in config.Products ) {
                 var button = new Button();

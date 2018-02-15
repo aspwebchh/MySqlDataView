@@ -27,6 +27,10 @@ namespace WebServiceCaller.Logic {
         public WindowItemDataType DataType {
             get;set;
         }
+
+        public WindowItemMatchType MatchType {
+            get;set;
+        }
         
         public List<WindowItem> Items {
             get;
@@ -56,6 +60,19 @@ namespace WebServiceCaller.Logic {
                 return WindowItemType.ListItem;
             } else {
                 throw new XmlConfigParseError( "ItemType类型不存在" );
+            }
+        }
+
+        public static WindowItemMatchType GetMatchType( string matchType, WindowItemType itemType ) {
+            if( itemType != WindowItemType.FilterItem) {
+                return WindowItemMatchType.Null;
+            }
+            if( matchType == "Like" ) {
+                return WindowItemMatchType.Like;
+            } else if( matchType == "Equals" ) {
+                return WindowItemMatchType.Equals;
+            } else {
+                throw new XmlConfigParseError("MatchType类型不存在");
             }
         }
     }
