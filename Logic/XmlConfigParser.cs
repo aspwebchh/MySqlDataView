@@ -141,16 +141,14 @@ namespace WebServiceCaller.Logic {
                 item.ItemType = WindowItem.GetItemType( itemType );
                 item.MatchType = WindowItem.GetMatchType(matchType, item.ItemType);
 
-                if( item.DataType == WindowItemDataType.Map || item.DataType == WindowItemDataType.List) {
-                    var childItemElements = windowItemElement.ChildNodes;
-                    if( childItemElements.Count == 0 ) {
-                        throw new XmlConfigParseError( "类型为Map或者List的Item节点必须存在子节点" );
-                    }
-                    foreach( XmlNode childItemElement in windowItemElement.ChildNodes ) {
-                        item.Items.Add( GetWindowItem( childItemElement ) );
+                var childItemElements = windowItemElement.ChildNodes;
+                if( childItemElements.Count > 0 ) {
+                    foreach( XmlElement childItem in childItemElements ) {
+                        var strName = childItem.GetAttribute( "Name" );
+                        var strValue = childItem.GetAttribute( "Value" );
+                        item.Contents.Add( new KeyVal<string, string>( strName, strValue ) );
                     }
                 }
-
             } else {
                 throw new XmlConfigParseError( "Item节点非Element节点" );
             }

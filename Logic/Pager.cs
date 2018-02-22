@@ -42,7 +42,7 @@ namespace WebServiceCaller.Logic {
 
         public event PageChanged OnPageChanged;
 
-        const int PAGE_SIZE = 30;
+        const int PAGE_SIZE = 40;
         UIContent uiContent;
 
         int currPageIndex = 1;

@@ -17,7 +17,7 @@ namespace WebServiceCaller.Logic {
     }
 
     public enum WindowItemDataType {
-        Integer, String, DateTime, Map, List
+        Integer, String, DateTime
     }
 
     public enum WindowItemMatchType {

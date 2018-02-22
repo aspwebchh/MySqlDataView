@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 
 namespace WebServiceCaller.Logic {
-   public  class WindowItem {
+
+
+    public  class WindowItem {
+
         public WindowItem() {
-            this.Items = new List<WindowItem>();
+            this.Contents = new List<KeyVal<string, string>>();
         }
 
         public string Name {
@@ -32,10 +35,11 @@ namespace WebServiceCaller.Logic {
             get;set;
         }
         
-        public List<WindowItem> Items {
+        public List<KeyVal<string, string>> Contents {
             get;
             private set;
         }
+
 
         public static WindowItemDataType GetDataType( string dataType ) {
             if( dataType == "String" ) {
@@ -44,10 +48,6 @@ namespace WebServiceCaller.Logic {
                 return WindowItemDataType.Integer;
             } else if( dataType == "DateTime" ) {
                 return WindowItemDataType.DateTime;
-            } else if( dataType == "Map" ) {
-                return WindowItemDataType.Map;
-            } else if( dataType == "List" ) {
-                return WindowItemDataType.List;
             } else {
                 throw new XmlConfigParseError( "DataType类型不存在" );
             }

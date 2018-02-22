@@ -100,6 +100,9 @@ namespace WebServiceCaller {
         private WrapPanel NewFilterForm( WindowObject window ) {
             var wrapPannel = new WrapPanel();
             var filterItems = window.FilterItems;
+            if( filterItems.Count == 0 ) {
+                return wrapPannel;
+            }
             foreach( var item in filterItems ) {
                 wrapPannel.Children.Add(NewFilterFormField(item));
             }
@@ -132,13 +135,15 @@ namespace WebServiceCaller {
 
         private WrapPanel NewFilterFormField(WindowItem windowItem) {
             var wrapPannel = new WrapPanel();
-            var title = new TextBlock();
-            title.Text = windowItem.Title;
-            title.Width = 100;
+            var title = FormFieldFactory.TextBlock( windowItem );
             wrapPannel.Children.Add( title );
-            var content = new TextBox();
-            content.Name = windowItem.Name;
-            content.Width = 200;
+
+            UIElement content;
+            if( windowItem.Contents.Count <= 0 ) {
+                content = FormFieldFactory.TextBox( windowItem );
+            } else {
+                content = FormFieldFactory.ComboBox( windowItem );
+            }
             wrapPannel.Children.Add( content );
             return wrapPannel;
         }
@@ -193,6 +198,13 @@ namespace WebServiceCaller {
             };
 
             pager.PageChange();
+
+            listView.MouseLeftButtonUp += delegate ( object sender, MouseButtonEventArgs e ) {
+                var selectedItem = listView.SelectedItem as IDictionary<string, object>;
+                var uiItemDetail = new UIItemDetail(window.ListItems,  selectedItem );
+                uiItemDetail.Owner = this;
+                uiItemDetail.ShowDialog();
+            };
             return listView;
         }
 

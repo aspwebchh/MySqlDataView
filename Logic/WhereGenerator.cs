@@ -12,10 +12,13 @@ namespace WebServiceCaller.Logic {
             if( element is TextBox ) {
                 var txtbox = element as TextBox;
                 txtbox.Text = "";
+            } else if(element is ComboBox) {
+                var combox = element as ComboBox;
+                combox.SelectedIndex = 0;
             } else if( element is WrapPanel ) {
                 var childs = ( element as WrapPanel ).Children;
                 foreach( UIElement item in childs ) {
-                    ClearFilterFormField(item);
+                    ClearFilterFormField( item );
                 }
             }
         }
@@ -24,15 +27,21 @@ namespace WebServiceCaller.Logic {
             var result = new Dictionary<string, string>();
             if( element is TextBox ) {
                 var txtbox = element as TextBox;
-                if( !string.IsNullOrEmpty(txtbox.Text.Trim()) ) {
-                    result [txtbox.Name] = txtbox.Text.Trim();
+                if( !string.IsNullOrEmpty( txtbox.Text.Trim() ) ) {
+                    result[ txtbox.Name ] = txtbox.Text.Trim();
+                }
+            } else if( element is ComboBox ) {
+                var combox = element as ComboBox;
+                var selectedValue = combox.SelectedValue.ToString();
+                if( !string.IsNullOrEmpty( selectedValue ) ) {
+                    result[ combox.Name ] = selectedValue;
                 }
             } else if( element is WrapPanel ) {
                 var childs = ( element as WrapPanel ).Children;
                 foreach( UIElement item in childs ) {
-                    var itemResult = GetFilterFormFieldResult(item);
+                    var itemResult = GetFilterFormFieldResult( item );
                     foreach( var key in itemResult.Keys ) {
-                        result [key] = itemResult [key];
+                        result[ key ] = itemResult[ key ];
                     }
                 }
             }
