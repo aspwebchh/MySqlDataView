@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using MySqlDataView.Logic;
 
-namespace WebServiceCaller.Common {
+namespace MySqlDataView.Common {
     public class Data2Object {
         public static List<Object> Convert(DataTable data) {
             var objectList = new List<Object>();
             foreach( DataRow row in data.Rows ) {
-                dynamic dataItem = new System.Dynamic.ExpandoObject();
+                var dataItem = new System.Dynamic.ExpandoObject();
                 var dataItemDic = dataItem as IDictionary<string, object>;
                 foreach( DataColumn col in data.Columns ) {
                     var name = col.ColumnName;
@@ -18,6 +20,24 @@ namespace WebServiceCaller.Common {
             }
 
             return objectList;
-        } 
+        }
+
+        public static List<Object> Convert( DataTable data, WindowObject window ) {
+            var objectList = Convert( data );
+            var hasContentsItems = window.ListItems.Where( item => item.Contents.Count > 0 ).ToList();    
+            if( hasContentsItems.Count == 0 ) {
+                return objectList;
+            }
+            return objectList.Select( item => {
+                var dicItem = item as IDictionary<string, object>;
+                hasContentsItems.ForEach( windowItem => {
+                    var found = windowItem.Contents.Find( keyVal => keyVal.GetVal() == dicItem[ windowItem.Name ].ToString() );
+                    if( found != null ) {
+                        dicItem[ windowItem.Name ] = found.GetKey();
+                    }
+                } );
+                return dicItem;
+            } ).ToList<object>();
+        }
     }
 }

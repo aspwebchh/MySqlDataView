@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebServiceCaller.Logic {
+namespace MySqlDataView.Logic {
     #region
     public enum WindowType {
         GetList, SubmitData
@@ -13,11 +13,11 @@ namespace WebServiceCaller.Logic {
 
     #region
     public enum WindowItemType {
-        FilterItem, ListItem
+        FilterItem, ListItem, DetailItem
     }
 
     public enum WindowItemDataType {
-        Integer, String, DateTime
+        Integer, String, DateTime, Html
     }
 
     public enum WindowItemMatchType {

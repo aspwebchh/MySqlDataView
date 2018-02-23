@@ -15,9 +15,9 @@ using System.Windows.Shapes;
 using System.Threading;
 using System.IO;
 using WinForm = System.Windows.Forms;
-using WebServiceCaller.Logic;
+using MySqlDataView.Logic;
 
-namespace WebServiceCaller {
+namespace MySqlDataView {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
@@ -32,17 +32,23 @@ namespace WebServiceCaller {
             if( !File.Exists( "./config.xml" ) ) {
                 return;
             }
-            var config = XmlConfigParser.Parse( "./config.xml" );
-            foreach( var product in config.Products ) {
-                var button = new Button();
-                button.Content = product.Name;
-                button.Margin = new Thickness( 0, 0, 10, 0 );
-                button.Click += delegate ( object sender, RoutedEventArgs e ) {
-                    var content = new UIContent( product, config.WindowsGroup );
+            try {
+                var config = XmlConfigParser.Parse( "./config.xml" );
+                var dataSource = config.Products.Select( product => new {
+                    Name = product.Name,
+                    Value = product
+                } );
+                Content.ItemsSource = dataSource;
+                Content.DisplayMemberPath = "Name";
+                Content.SelectedValuePath = "Value";
+                Content.MouseDoubleClick += delegate ( object sender, MouseButtonEventArgs e ) {
+                    var selectItem = Content.SelectedValue as Product;
+                    var content = new UIContent( selectItem, config.WindowsGroup );
                     content.Owner = this;
                     content.ShowDialog();
                 };
-                Content.Children.Add( button );
+            } catch(XmlConfigParseError e) {
+                MessageBox.Show( "配置文件解析异常：" +  e.Message );
             }
         }
 

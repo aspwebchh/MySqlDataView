@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebServiceCaller.Logic {
+namespace MySqlDataView.Logic {
     public  class Config {
         public WindowGroup WindowsGroup {
             get;set;

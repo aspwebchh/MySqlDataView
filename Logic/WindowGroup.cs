@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace WebServiceCaller.Logic {
+namespace MySqlDataView.Logic {
     public class WindowGroup {
         public WindowGroup() {
             this.Items = new List<WindowObject>();

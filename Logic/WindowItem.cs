@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace WebServiceCaller.Logic {
+namespace MySqlDataView.Logic {
 
 
     public  class WindowItem {
@@ -48,6 +48,8 @@ namespace WebServiceCaller.Logic {
                 return WindowItemDataType.Integer;
             } else if( dataType == "DateTime" ) {
                 return WindowItemDataType.DateTime;
+            } else if(dataType == "Html") {
+                return WindowItemDataType.Html;
             } else {
                 throw new XmlConfigParseError( "DataType类型不存在" );
             }
@@ -58,6 +60,8 @@ namespace WebServiceCaller.Logic {
                 return WindowItemType.FilterItem;
             } else if( itemType == "ListItem" ) {
                 return WindowItemType.ListItem;
+            } else if( itemType == "DetailItem" ) {
+                return WindowItemType.DetailItem;
             } else {
                 throw new XmlConfigParseError( "ItemType类型不存在" );
             }

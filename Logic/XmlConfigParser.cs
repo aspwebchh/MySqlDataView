@@ -6,7 +6,7 @@ using System.Xml;
 using System.Windows.Controls;
 using System.Windows;
 
-namespace WebServiceCaller.Logic {
+namespace MySqlDataView.Logic {
     public class XmlConfigParser {
 
         public static Config Parse( string xmlFilePath ) {
@@ -95,20 +95,50 @@ namespace WebServiceCaller.Logic {
                 throw new XmlConfigParseError( "Window节点名称不正确" );
             }
 
+            const string ATTR_TITLE = "Title";
+            const string ATTR_TYPE = "Type";
+            const string ATTR_TABLENAME = "TableName";
+            const string ATTR_SORTFIELD = "SortField";
+            const string ATTR_SORTMODE = "SortMode";
+            const string ATTR_UNIQUEID = "UniqueID";
+
             var window = new WindowObject();
 
             if( windowElement is XmlElement ) {
                 var ele = windowElement as XmlElement;
-                var title = ele.GetAttribute( "Title" );
-                var type = ele.GetAttribute( "Type" );
-                var tableName = ele.GetAttribute( "TableName" );
-                var sortField = ele.GetAttribute( "SortField" );
-                var sortMode = ele.GetAttribute( "SortMode" );
+
+                if( !ele.HasAttribute( ATTR_TITLE ) ) {
+                    throw new XmlConfigParseError( ATTR_TITLE+ "属性必须设置" );
+                }
+                if( !ele.HasAttribute( ATTR_TYPE ) ) {
+                    throw new XmlConfigParseError( ATTR_TYPE + "属性必须设置" );
+                }
+                if( !ele.HasAttribute( ATTR_TABLENAME ) ) {
+                    throw new XmlConfigParseError( ATTR_TABLENAME + "属性必须设置" );
+                }
+                if( !ele.HasAttribute( ATTR_SORTFIELD ) ) {
+                    throw new XmlConfigParseError( ATTR_SORTFIELD + "属性必须设置" );
+                }
+                if( !ele.HasAttribute( ATTR_SORTMODE ) ) {
+                    throw new XmlConfigParseError( ATTR_SORTMODE + "属性必须设置" );
+                }
+                if( !ele.HasAttribute( ATTR_UNIQUEID ) ) {
+                    throw new XmlConfigParseError( ATTR_UNIQUEID + "属性必须设置" );
+                }
+
+                var title = ele.GetAttribute( ATTR_TITLE );
+                var type = ele.GetAttribute( ATTR_TYPE );
+                var tableName = ele.GetAttribute( ATTR_TABLENAME );
+                var sortField = ele.GetAttribute( ATTR_SORTFIELD );
+                var sortMode = ele.GetAttribute( ATTR_SORTMODE );
+                var uniqueID = ele.GetAttribute( ATTR_UNIQUEID );
+                
                 window.Title = title;
                 window.Type = WindowObject.GetType( type );
                 window.TableName = tableName;
                 window.SortField = sortField;
                 window.SortMode = sortMode;
+                window.UniqueID = uniqueID;
                 if( windowElement.ChildNodes.Count == 0 ) {
                     throw new XmlConfigParseError( "Window节点必须存在子节点" );
                 }

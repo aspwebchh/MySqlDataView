@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace WebServiceCaller.Logic {
+namespace MySqlDataView.Logic {
     class WhereGenerator {
         public static void ClearFilterFormField( UIElement element) {
             if( element is TextBox ) {

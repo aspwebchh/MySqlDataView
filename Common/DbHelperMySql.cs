@@ -10,7 +10,7 @@ using MySql.Data.MySqlClient;
 using System.Threading;
 using System.Windows;
 
-namespace WebServiceCaller.Common {
+namespace MySqlDataView.Common {
     /// <summary>
     /// 数据访问抽象基础类
     /// Copyright (C) Maticsoft

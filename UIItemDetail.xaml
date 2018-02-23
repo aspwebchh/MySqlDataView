@@ -1,9 +1,9 @@
-﻿<Window x:Class="WebServiceCaller.UIItemDetail"
+﻿<Window x:Class="MySqlDataView.UIItemDetail"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WebServiceCaller"
+        xmlns:local="clr-namespace:MySqlDataView"
         mc:Ignorable="d"
         Title="UIItemDetail" WindowStartupLocation="CenterOwner">
     <Window.Resources>
@@ -114,6 +114,12 @@
         </Grid.ColumnDefinitions>
 
         <ListView x:Name="ContentList">
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="以html格式浏览" Click="MenuItem_Click_View_Html">
+                    </MenuItem>
+                </ContextMenu>
+            </ListView.ContextMenu>
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
@@ -139,5 +145,6 @@
       
         </ListView>
 
+   
     </Grid>
 </Window>

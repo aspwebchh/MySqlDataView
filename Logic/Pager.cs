@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace WebServiceCaller.Logic {
+namespace MySqlDataView.Logic {
     public delegate void PageChanged();
 
     public class Pager {

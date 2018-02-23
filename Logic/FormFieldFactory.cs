@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace WebServiceCaller.Logic {
+namespace MySqlDataView.Logic {
     class FormFieldFactory {
         public static TextBlock TextBlock( WindowItem windowItem ) {
             var title = new TextBlock();

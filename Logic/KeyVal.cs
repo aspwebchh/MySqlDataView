@@ -1,4 +1,4 @@
-﻿namespace WebServiceCaller.Logic {
+﻿namespace MySqlDataView.Logic {
     public class KeyVal<Key, Val> {
         private Key key;
         private Val val;

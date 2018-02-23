@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace WebServiceCaller.Logic {
+namespace MySqlDataView.Logic {
     public class WindowObject {
         public WindowObject() {
             this.Items = new List<WindowItem>();
@@ -13,6 +13,10 @@ namespace WebServiceCaller.Logic {
         public string TableName {
             get;
             set;
+        }
+
+        public string UniqueID {
+            get;set;
         }
 
         public string Title {
@@ -45,6 +49,12 @@ namespace WebServiceCaller.Logic {
         public List<WindowItem> FilterItems {
             get {
                 return Items.Where( item => item.ItemType == WindowItemType.FilterItem ).ToList();
+            }
+        }
+
+        public List<WindowItem> DetailItems {
+            get {
+                return Items.Where( item => item.ItemType == WindowItemType.DetailItem ).ToList();
             }
         }
 

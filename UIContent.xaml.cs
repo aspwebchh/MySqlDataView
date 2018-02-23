@@ -11,11 +11,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Threading;
-using WebServiceCaller.Logic;
-using WebServiceCaller.Common;
+using MySqlDataView.Logic;
+using MySqlDataView.Common;
 using System.Data;
 
-namespace WebServiceCaller {
+namespace MySqlDataView {
     /// <summary>
     /// UIContent.xaml 的交互逻辑
     /// </summary>
@@ -24,15 +24,22 @@ namespace WebServiceCaller {
         private WindowGroup windowGroup;
         private WindowObject currWindow;
         private String where = "";
+        private Dictionary<WindowObject, TabWithListView> tabList = new Dictionary<WindowObject, TabWithListView>();
 
         public UIContent( Product product, WindowGroup group ) {
+            this.Title = product.Name;
             this.product = product;
             this.windowGroup = group;
             DbHelperMySqL.ConnectionString = product.ConnectionString;
-
             InitializeComponent();
-
             this.InitNavMenu();
+            this.InitListViewSize();
+        }
+
+        private void InitListViewSize() {
+            this.SizeChanged += delegate ( object sender, SizeChangedEventArgs e ) {
+                tabList.Values.ToList().ForEach( item => item.ResizeListView() );
+            };
         }
 
         private void SetCurrTabState(WindowObject window) {
@@ -53,11 +60,14 @@ namespace WebServiceCaller {
                     if( tabItems.ContainsKey( item ) ) {
                         tabItem = tabItems[ item ];
                     } else {
-                        tabItem = NewTabItem( item,delegate(TabItem removeTarget) {
+                        var tabWithListView = NewTabItem( item,delegate(TabItem removeTarget) {
                             Contents.Items.Remove( removeTarget );
                             tabItems.Remove( item );
+                            tabList.Remove( item );
                         } );
+                        tabItem = tabWithListView.TabItem;
                         tabItems.Add( item, tabItem );
+                        tabList.Add( item, tabWithListView );
                         Contents.Items.Add( tabItem );
                     }
                     Contents.SelectedIndex = Contents.Items.IndexOf( tabItem );
@@ -66,7 +76,8 @@ namespace WebServiceCaller {
             }
         }
 
-        private TabItem NewTabItem( WindowObject window, Action<TabItem> onRemove ) {
+
+        private TabWithListView NewTabItem( WindowObject window, Action<TabItem> onRemove ) {
             var stackPannel = new StackPanel();
             var form = NewFilterForm(window);
             var list = NewTabItemList(window);
@@ -93,9 +104,14 @@ namespace WebServiceCaller {
             tabItem.Loaded += delegate ( object sender, RoutedEventArgs e ) {
                 list.Height = Contents.ActualHeight - form.ActualHeight - tabItem.ActualHeight;
             };
-            return tabItem;
-        }
 
+            var tabWithListView = new TabWithListView();
+            tabWithListView.TabItem = tabItem;
+            tabWithListView.ResizeListView = delegate () {
+                list.Height = Contents.ActualHeight - form.ActualHeight - tabItem.ActualHeight;
+            };
+            return tabWithListView;
+        }
 
         private WrapPanel NewFilterForm( WindowObject window ) {
             var wrapPannel = new WrapPanel();
@@ -175,6 +191,7 @@ namespace WebServiceCaller {
             Pager pager = Pager.NewOrGet( product, currWindow, this );
 
             var fields = string.Join(",", window.ListItems.Select( item => item.Name ).ToArray());
+            fields += "," + window.UniqueID;
             pager.OnPageChanged += delegate () {
                 ThreadPool.QueueUserWorkItem( delegate ( object state ) {
                     var sortString = window.SortField + " " + window.SortMode;
@@ -188,7 +205,7 @@ namespace WebServiceCaller {
                     var dataCountTask = DbHelperMySqL.GetSingleAsync( "select count(*) from " + window.TableName + " where " + whereString);
                     var dataList = dataListTask.Result;
                     var dataCount = dataCountTask.Result;
-                    var objectList = Data2Object.Convert( dataList.Tables[ 0 ] );
+                    var objectList = Data2Object.Convert( dataList.Tables[ 0 ],window );
                     Dispatcher.Invoke( (Action)delegate () {
                         pager.SetDataCount( int.Parse( dataCount.ToString() ) );
                         pager.Render();
@@ -201,7 +218,10 @@ namespace WebServiceCaller {
 
             listView.MouseLeftButtonUp += delegate ( object sender, MouseButtonEventArgs e ) {
                 var selectedItem = listView.SelectedItem as IDictionary<string, object>;
-                var uiItemDetail = new UIItemDetail(window.ListItems,  selectedItem );
+                if( selectedItem == null ) {
+                    return;
+                }
+                var uiItemDetail = new UIItemDetail( window, selectedItem[window.UniqueID].ToString() );
                 uiItemDetail.Owner = this;
                 uiItemDetail.ShowDialog();
             };
