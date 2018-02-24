@@ -13,12 +13,8 @@ namespace MySqlDataView.Logic {
             var doc = new XmlDocument();
             doc.Load( xmlFilePath );
 
-            var windowsGroup = GetGroups( doc );
-            var products = GetProducts( doc );
-
             var config = new Config();
-            config.WindowsGroup = windowsGroup;
-            config.Products = products;
+            config.Products = GetProducts( doc );
             return config;
         }
 
@@ -50,21 +46,19 @@ namespace MySqlDataView.Logic {
             product.ID = id;
             product.Name = name;
             product.ConnectionString = connectionString;
+
+            if( node.ChildNodes.Count > 0 ) {
+                var uniqueGroupElement = node.ChildNodes[ 0 ] as XmlElement;
+                product.WindowGroup = GetGroup( uniqueGroupElement );
+            } else {
+                 throw new XmlConfigParseError( "WindowGroup节点不存在" );
+            }
+
             return product;
         }
         #endregion;
 
         #region
-        private static WindowGroup GetGroups( XmlDocument doc) {
-            var groupElements = doc.GetElementsByTagName( "WindowGroup" );
-            if( groupElements.Count > 0 ) {
-                var unique = groupElements[ 0 ];
-                return GetGroup( unique );
-            } else {
-                throw new XmlConfigParseError( "WindowGroup节点不存在" );
-            }
-        }
-
         private static WindowGroup GetGroup(XmlNode groupElement) {
             if( groupElement.Name != "WindowGroup" ) {
                 throw new XmlConfigParseError( "WindowGroup节点名称不正确" );

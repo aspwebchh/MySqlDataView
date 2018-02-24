@@ -21,7 +21,7 @@ namespace MySqlDataView.Logic {
     }
 
     public enum WindowItemMatchType {
-        Equals, Like, Null
+        Equals, Like,GT,LT, Null
     }
     #endregion
 }

@@ -75,8 +75,12 @@ namespace MySqlDataView.Logic {
                 return WindowItemMatchType.Like;
             } else if( matchType == "Equals" ) {
                 return WindowItemMatchType.Equals;
+            } else if( matchType == "GT" ) {
+                return WindowItemMatchType.GT;
+            } else if( matchType == "LT" ) {
+                return WindowItemMatchType.LT;
             } else {
-                throw new XmlConfigParseError("MatchType类型不存在");
+                throw new XmlConfigParseError( "MatchType类型不存在" );
             }
         }
     }

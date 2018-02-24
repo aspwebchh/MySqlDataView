@@ -9,4 +9,41 @@
         <Setter Property="Margin" Value="10,10,10,10"/>
         <Setter Property="Padding" Value="8,4,8,4"/>
     </Style>
+
+    <!--#region -->
+    <Style x:Key="FormFieldTitle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Padding" Value="4,4,4,4"/>
+        <Setter Property="Margin" Value="0,0,10,5"/>
+    </Style>
+
+    <Style x:Key="FormField" TargetType="{x:Type TextBox}">
+        <Setter Property="Padding" Value="4,4,4,4"/>
+        <Setter Property="Width" Value="200" />
+        <Setter Property="Margin" Value="0,0,10,5"/>
+    </Style>
+
+    <Style x:Key="FormFieldComboBox" TargetType="{x:Type ComboBox}">
+        <Setter Property="Width" Value="200" />
+        <Setter Property="Margin" Value="0,0,10,5"/>
+    </Style>
+
+    <Style x:Key="FormFieldDatePicker" TargetType="{x:Type DatePicker}">
+        <Setter Property="Width" Value="200" />
+        <Setter Property="Margin" Value="0,0,10,5"/>
+    </Style>
+
+    <Style x:Key="FormFieldButton" TargetType="{x:Type Button}">
+        <Setter Property="Margin" Value="15,0,0,0" />
+        <Setter Property="Margin" Value="0,0,10,5"/>
+    </Style>
+
+    <Style x:Key="Form" TargetType="{x:Type WrapPanel}">
+        <Setter Property="Margin" Value="10" />
+    </Style>
+    <!--#endregion-->
+
+
+    <Style TargetType="ListViewItem" x:Key="ListViewItem">
+        <Setter Property="Height" Value="28" />
+    </Style>
 </ResourceDictionary>

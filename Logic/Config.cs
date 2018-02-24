@@ -6,10 +6,6 @@ using System.Threading.Tasks;
 
 namespace MySqlDataView.Logic {
     public  class Config {
-        public WindowGroup WindowsGroup {
-            get;set;
-        }
-
         public List<Product> Products {
             get;set;
         }

@@ -17,6 +17,10 @@ namespace MySqlDataView.Logic {
             get;set;
         }
 
+        public WindowGroup WindowGroup {
+            get;set;
+        }
+
         public override string ToString() {
             return  "name:" + Name + "\n" + "connectionString:" + ConnectionString + "\nID：" + ID ;
         }

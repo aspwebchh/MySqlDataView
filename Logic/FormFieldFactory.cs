@@ -5,21 +5,28 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms.Integration;
+using WinForm = System.Windows.Forms;
 
 namespace MySqlDataView.Logic {
     class FormFieldFactory {
         public static TextBlock TextBlock( WindowItem windowItem ) {
             var title = new TextBlock();
             title.Text = windowItem.Title;
-            title.Width = 100;
             return title;
         }
 
         public static TextBox TextBox( WindowItem windowItem ) {
             var content = new TextBox();
             content.Name = windowItem.Name;
-            content.Width = 200;
             return content;
+        }
+
+
+        public static DatePicker DatePicker( WindowItem windowItem ) {
+            var datePicker = new DatePicker();
+            datePicker.Name = windowItem.Name;
+            return datePicker;
         }
 
         public static ComboBox ComboBox(WindowItem windowItem) {
@@ -37,7 +44,6 @@ namespace MySqlDataView.Logic {
             content.SelectedValuePath = "Value";
             content.Name = windowItem.Name;
             content.SelectedIndex = 0;
-            content.Width = 200;
             return content;
         }
     }

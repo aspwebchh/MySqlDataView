@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Text.RegularExpressions;
 using MySqlDataView.Logic;
 using MySqlDataView.Common;
 
@@ -42,6 +43,8 @@ namespace MySqlDataView {
             }
         }
 
+         
+
         private List<Object> Dic2List( List<WindowItem> items, IDictionary<string, object> data ) {
             Func<String,String> getTitle = delegate (string key) {
                 var found = items.Find( windowItem => key == windowItem.Name );
@@ -53,15 +56,16 @@ namespace MySqlDataView {
             };
             Func<KeyValuePair<string, object>, String> getVal = delegate ( KeyValuePair<string,object> keyVal  ) {
                 var found = items.Find( windowItem => keyVal.Key == windowItem.Name );
-                const int VALUE_LEN = 100;
                 if( found != null ) {
                     if( found.DataType == WindowItemDataType.Html ) {
-                        return "html字符串";
+                        string htmlText = keyVal.Value.ToString();
+                        htmlText = Common.Common.FilterHtml( htmlText );
+                        return htmlText;
                     } else {
-                        return Common.Common.GetString( keyVal.Value.ToString(), VALUE_LEN );
+                        return keyVal.Value.ToString();
                     }
                 } else {
-                    return Common.Common.GetString( keyVal.Value.ToString(), VALUE_LEN );
+                    return keyVal.Value.ToString();
                 }
             };
             return data.Select( item => new {
@@ -90,7 +94,7 @@ namespace MySqlDataView {
         private void MenuItem_Click_View_Html( object sender, RoutedEventArgs e ) {
             var selectItem = ContentList.SelectedItem;
             var type = selectItem.GetType();
-            var name = type.GetProperty( "Name" ).GetValue( selectItem ).ToString();
+            var name = type.GetProperty( "Name" ).GetValue( selectItem , null).ToString();
             var key = FindKeyByTitleFromWindow( name );
             var text = FindValueByKey( key );
 

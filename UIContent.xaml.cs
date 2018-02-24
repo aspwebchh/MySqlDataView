@@ -101,20 +101,31 @@ namespace MySqlDataView {
             tabItem.MouseLeftButtonUp += delegate ( object sender, MouseButtonEventArgs e ) {
                 SetCurrTabState( window );
             };
+
+            Action resizeListView = delegate () {
+                var height = Contents.ActualHeight - form.ActualHeight - tabItem.ActualHeight;
+                //不知何故，窗口全屏状态下高度值计算出错
+                if( this.WindowState == WindowState.Maximized ) {
+                    height -= 10;
+                } 
+                list.Height = height;
+            };
+
             tabItem.Loaded += delegate ( object sender, RoutedEventArgs e ) {
-                list.Height = Contents.ActualHeight - form.ActualHeight - tabItem.ActualHeight;
+                resizeListView();
             };
 
             var tabWithListView = new TabWithListView();
             tabWithListView.TabItem = tabItem;
             tabWithListView.ResizeListView = delegate () {
-                list.Height = Contents.ActualHeight - form.ActualHeight - tabItem.ActualHeight;
+                resizeListView();
             };
             return tabWithListView;
         }
 
         private WrapPanel NewFilterForm( WindowObject window ) {
             var wrapPannel = new WrapPanel();
+            wrapPannel.Style = Resources[ "Form" ] as Style;
             var filterItems = window.FilterItems;
             if( filterItems.Count == 0 ) {
                 return wrapPannel;
@@ -123,10 +134,11 @@ namespace MySqlDataView {
                 wrapPannel.Children.Add(NewFilterFormField(item));
             }
             var filterBtn = new Button();
+            filterBtn.Style = Resources[ "FormFieldButton" ] as Style;
             filterBtn.Content = "筛选";
             filterBtn.Width = 50;
             filterBtn.Click += delegate ( object sender, RoutedEventArgs e ) {
-                where = WhereGenerator.GetWhere(wrapPannel, window.FilterItems);
+                where = WhereGenerator.GetWhere(wrapPannel);
                 var pager = Pager.Get(product, window, this);
                 pager.SetCurrPageIndex(1);
                 pager.PageChange();
@@ -135,6 +147,7 @@ namespace MySqlDataView {
 
 
             var resetBtn = new Button();
+            resetBtn.Style = Resources[ "FormFieldButton" ] as Style;
             resetBtn.Content = "重置";
             resetBtn.Width = 50;
             resetBtn.Click += delegate ( object sender, RoutedEventArgs e ) {
@@ -152,14 +165,23 @@ namespace MySqlDataView {
         private WrapPanel NewFilterFormField(WindowItem windowItem) {
             var wrapPannel = new WrapPanel();
             var title = FormFieldFactory.TextBlock( windowItem );
+            title.Style = Resources[ "FormFieldTitle" ] as Style;
             wrapPannel.Children.Add( title );
 
-            UIElement content;
+            FrameworkElement content;
             if( windowItem.Contents.Count <= 0 ) {
-                content = FormFieldFactory.TextBox( windowItem );
+                if( windowItem.DataType == WindowItemDataType.DateTime ) {
+                    content = FormFieldFactory.DatePicker( windowItem );
+                    content.Style = Resources[ "FormFieldDatePicker" ] as Style;
+                } else {
+                    content = FormFieldFactory.TextBox( windowItem );
+                    content.Style = Resources[ "FormField" ] as Style;
+                }
             } else {
                 content = FormFieldFactory.ComboBox( windowItem );
+                content.Style = Resources[ "FormFieldComboBox" ] as Style;
             }
+            content.Tag = windowItem;
             wrapPannel.Children.Add( content );
             return wrapPannel;
         }
@@ -167,12 +189,13 @@ namespace MySqlDataView {
         private ListView NewTabItemList( WindowObject window ) {
             var listView = new ListView();
             var gridView = new GridView();
+            var listViewItemPadding = new Thickness( 10, 0, 10, 0 );
             foreach( var windowItem in window.ListItems ) {
                 var column = new GridViewColumn();
                 var titleTemplate = new TextBlock();
                 titleTemplate.Text = windowItem.Title;
                 titleTemplate.TextAlignment = TextAlignment.Left;
-                titleTemplate.Width = 200;
+                titleTemplate.Padding = listViewItemPadding;
                 column.Header = titleTemplate;
 
                 var binding = new Binding();
@@ -180,7 +203,7 @@ namespace MySqlDataView {
                 var dtpl = new DataTemplate();
                 var fef = new FrameworkElementFactory( typeof( TextBlock ) );
                 fef.SetBinding( TextBlock.TextProperty, binding );
-                // fef.SetValue( TextBlock.WidthProperty, 100.0 );
+                fef.SetValue( TextBlock.PaddingProperty, listViewItemPadding);
                 fef.SetValue( TextBlock.TextAlignmentProperty, TextAlignment.Center );
                 dtpl.VisualTree = fef;
                 column.CellTemplate = dtpl;
@@ -201,6 +224,7 @@ namespace MySqlDataView {
                     } else {
                         whereString = where;
                     }
+                    Console.WriteLine(whereString);
                     var dataListTask = DbHelperMySqL.QueryAsync( "select "+ fields + " from " + window.TableName + " where " + whereString + " order by " + sortString + " limit " + pager.GetLimit() );
                     var dataCountTask = DbHelperMySqL.GetSingleAsync( "select count(*) from " + window.TableName + " where " + whereString);
                     var dataList = dataListTask.Result;
@@ -216,7 +240,7 @@ namespace MySqlDataView {
 
             pager.PageChange();
 
-            listView.MouseLeftButtonUp += delegate ( object sender, MouseButtonEventArgs e ) {
+            listView.MouseDoubleClick += delegate ( object sender, MouseButtonEventArgs e ) {
                 var selectedItem = listView.SelectedItem as IDictionary<string, object>;
                 if( selectedItem == null ) {
                     return;
@@ -225,9 +249,11 @@ namespace MySqlDataView {
                 uiItemDetail.Owner = this;
                 uiItemDetail.ShowDialog();
             };
+
+            listView.ItemContainerStyle = Resources[ "ListViewItem" ] as Style;
+
             return listView;
         }
-
 
         private void FirstPageButton_Click( object sender, RoutedEventArgs e ) {
             Pager.Get( product, currWindow , this).First();

@@ -43,7 +43,7 @@ namespace MySqlDataView {
                 Content.SelectedValuePath = "Value";
                 Content.MouseDoubleClick += delegate ( object sender, MouseButtonEventArgs e ) {
                     var selectItem = Content.SelectedValue as Product;
-                    var content = new UIContent( selectItem, config.WindowsGroup );
+                    var content = new UIContent( selectItem, selectItem.WindowGroup );
                     content.Owner = this;
                     content.ShowDialog();
                 };

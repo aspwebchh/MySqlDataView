@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MySqlDataView"
         mc:Ignorable="d"
-        Title="浏览html文本"  WindowStartupLocation="CenterOwner">
+        Title="浏览html文本"  WindowStartupLocation="CenterOwner" Width="1000" Height="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>

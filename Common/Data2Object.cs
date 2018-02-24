@@ -13,12 +13,15 @@ namespace MySqlDataView.Common {
                 var dataItemDic = dataItem as IDictionary<string, object>;
                 foreach( DataColumn col in data.Columns ) {
                     var name = col.ColumnName;
-                    var val = row[name].ToString();
+                    var  val = row[ name ].ToString();
+                    if( col.DataType.FullName == "MySql.Data.Types.MySqlDateTime" ) {
+                        DateTime dt = DateTime.Parse( val );
+                        val = dt.ToString( "yyyy-MM-dd hh:mm:ss" );
+                    } 
                     dataItemDic[ name ] = val;
                 }
                 objectList.Add( dataItem );
             }
-
             return objectList;
         }
 
