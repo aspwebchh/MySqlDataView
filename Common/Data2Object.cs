@@ -6,6 +6,18 @@ using MySqlDataView.Logic;
 
 namespace MySqlDataView.Common {
     public class Data2Object {
+
+        public static DataTable ToListDataTable( DataTable dataTable ) {
+            foreach( DataRow row in dataTable.Rows ) {
+                foreach( DataColumn col in dataTable.Columns ) {
+                    if( col.DataType.FullName == "System.String" ) {
+                        row[ col.ColumnName ] = Common.GetString( row[ col.ColumnName ].ToString(), 50 );
+                    }
+                }
+            }
+            return dataTable;
+        }
+
         public static List<Object> Convert(DataTable data) {
             var objectList = new List<Object>();
             foreach( DataRow row in data.Rows ) {
@@ -27,18 +39,24 @@ namespace MySqlDataView.Common {
 
         public static List<Object> Convert( DataTable data, WindowObject window ) {
             var objectList = Convert( data );
-            var hasContentsItems = window.ListItems.Where( item => item.Contents.Count > 0 ).ToList();    
+            var hasContentsItems = window.ListItems.Where( item => item.Contents.Count > 0 ).ToList();
             if( hasContentsItems.Count == 0 ) {
                 return objectList;
             }
             return objectList.Select( item => {
                 var dicItem = item as IDictionary<string, object>;
-                hasContentsItems.ForEach( windowItem => {
-                    var found = windowItem.Contents.Find( keyVal => keyVal.GetVal() == dicItem[ windowItem.Name ].ToString() );
-                    if( found != null ) {
-                        dicItem[ windowItem.Name ] = found.GetKey();
+                foreach( var k in dicItem.Keys.ToList() ) {
+                    foreach( var windowItem in hasContentsItems ) {
+                        if( k == windowItem.Name ) {
+                            var result = from keyVal in windowItem.Contents
+                                     where keyVal.GetVal() == dicItem[ k ].ToString()
+                                     select keyVal.GetKey();
+                            if( result.Count() > 0 ) {
+                                dicItem[ k ] = result.ToList()[ 0 ];
+                            }
+                        }
                     }
-                } );
+                }
                 return dicItem;
             } ).ToList<object>();
         }

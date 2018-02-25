@@ -102,5 +102,12 @@ namespace MySqlDataView {
             htmlView.Owner = this;
             htmlView.ShowDialog();            
         }
+
+        private void MenuItem_Click_Copy( object sender, RoutedEventArgs e ) {
+            var selectItem = ContentList.SelectedItem;
+            var type = selectItem.GetType();
+            var value = type.GetProperty( "Value" ).GetValue( selectItem, null ).ToString();
+            Clipboard.SetDataObject( value );
+        }
     }
 }

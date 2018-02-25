@@ -119,6 +119,8 @@
                 <ContextMenu>
                     <MenuItem Header="显示全部" Click="MenuItem_Click_View_Html">
                     </MenuItem>
+                    <MenuItem Header="拷贝" Click="MenuItem_Click_Copy">
+                    </MenuItem>
                 </ContextMenu>
             </ListView.ContextMenu>
 

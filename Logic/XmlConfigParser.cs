@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using System.Windows.Controls;
 using System.Windows;
 
@@ -72,9 +73,6 @@ namespace MySqlDataView.Logic {
 
             if(  groupElement is XmlElement) {
                 var ele = groupElement as XmlElement;
-                var title = ele.GetAttribute( "Title" );
-                group.Title = title;
-
                 foreach( XmlNode windowElement in groupElement.ChildNodes ) {
                     group.Items.Add( GetWindow( windowElement ) );
                 }

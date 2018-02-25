@@ -23,9 +23,21 @@ namespace MySqlDataView {
     /// </summary>
     public partial class UIMain : Window {
 
+        private static UIMain instance;
+
+        public static void HideWindow() {
+            instance.Hide();
+        }
+
+
+        public static void ShowWindow() {
+            instance.Show();
+        }
+
         public UIMain() {
             InitializeComponent();
             LoadConfig();
+            instance = this;
         }
 
         private void LoadConfig() {
@@ -34,10 +46,11 @@ namespace MySqlDataView {
             }
             try {
                 var config = XmlConfigParser.Parse( "./config.xml" );
-                var dataSource = config.Products.Select( product => new {
-                    Name = product.Name,
-                    Value = product
-                } );
+                var dataSource = from product in config.Products
+                                 select new {
+                                     Name = product.Name,
+                                     Value = product
+                                 };
                 Content.ItemsSource = dataSource;
                 Content.DisplayMemberPath = "Name";
                 Content.SelectedValuePath = "Value";
@@ -45,7 +58,8 @@ namespace MySqlDataView {
                     var selectItem = Content.SelectedValue as Product;
                     var content = new UIContent( selectItem, selectItem.WindowGroup );
                     content.Owner = this;
-                    content.ShowDialog();
+                    content.Show();
+                    UIMain.HideWindow();
                 };
             } catch(XmlConfigParseError e) {
                 MessageBox.Show( "配置文件解析异常：" +  e.Message );

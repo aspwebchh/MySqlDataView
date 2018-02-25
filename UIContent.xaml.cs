@@ -34,6 +34,10 @@ namespace MySqlDataView {
             InitializeComponent();
             this.InitNavMenu();
             this.InitListViewSize();
+
+            Closed += delegate ( object sender, EventArgs e ) {
+                UIMain.ShowWindow();
+            };
         }
 
         private void InitListViewSize() {
@@ -224,17 +228,21 @@ namespace MySqlDataView {
                     } else {
                         whereString = where;
                     }
-                    Console.WriteLine(whereString);
-                    var dataListTask = DbHelperMySqL.QueryAsync( "select "+ fields + " from " + window.TableName + " where " + whereString + " order by " + sortString + " limit " + pager.GetLimit() );
-                    var dataCountTask = DbHelperMySqL.GetSingleAsync( "select count(*) from " + window.TableName + " where " + whereString);
-                    var dataList = dataListTask.Result;
-                    var dataCount = dataCountTask.Result;
-                    var objectList = Data2Object.Convert( dataList.Tables[ 0 ],window );
-                    Dispatcher.Invoke( (Action)delegate () {
-                        pager.SetDataCount( int.Parse( dataCount.ToString() ) );
-                        pager.Render();
-                        listView.ItemsSource = objectList;
-                    } );
+                    try {
+                        var dataListTask = DbHelperMySqL.QueryAsync( "select " + fields + " from " + window.TableName + " where " + whereString + " order by " + sortString + " limit " + pager.GetLimit() );
+                        var dataCountTask = DbHelperMySqL.GetSingleAsync( "select count(*) from " + window.TableName + " where " + whereString );
+                        var dataList = dataListTask.Result;
+                        var dataCount = dataCountTask.Result;
+                        var dataTable = Data2Object.ToListDataTable( dataList.Tables[ 0 ] );
+                        var objectList = Data2Object.Convert( dataTable, window );
+                        Dispatcher.Invoke( (Action)delegate () {
+                            pager.SetDataCount( int.Parse( dataCount.ToString() ) );
+                            pager.Render();
+                            listView.ItemsSource = objectList;
+                        } );
+                    } catch(Exception ex) {
+                        MessageBox.Show( ex.Message );
+                    }
                 } );
             };
 

@@ -8,9 +8,6 @@ namespace MySqlDataView.Logic {
         public WindowGroup() {
             this.Items = new List<WindowObject>();
         }
-        public string Title {
-            get;set;
-        }
 
         public List<WindowObject> Items {
             get;
