@@ -68,6 +68,7 @@ namespace MySqlDataView {
                             Contents.Items.Remove( removeTarget );
                             tabItems.Remove( item );
                             tabList.Remove( item );
+                            treeViewItem.IsSelected = false;
                         } );
                         tabItem = tabWithListView.TabItem;
                         tabItems.Add( item, tabItem );
@@ -101,6 +102,7 @@ namespace MySqlDataView {
             tabTitle.ContextMenu = contextMenu;
 
             tabItem.Header = tabTitle;
+
             tabItem.Content = stackPannel;
             tabItem.MouseLeftButtonUp += delegate ( object sender, MouseButtonEventArgs e ) {
                 SetCurrTabState( window );
@@ -112,7 +114,7 @@ namespace MySqlDataView {
                 if( this.WindowState == WindowState.Maximized ) {
                     height -= 10;
                 } 
-                list.Height = height;
+                list.Height = height - 25;
             };
 
             tabItem.Loaded += delegate ( object sender, RoutedEventArgs e ) {
@@ -233,7 +235,7 @@ namespace MySqlDataView {
                         var dataCountTask = DbHelperMySqL.GetSingleAsync( "select count(*) from " + window.TableName + " where " + whereString );
                         var dataList = dataListTask.Result;
                         var dataCount = dataCountTask.Result;
-                        var dataTable = Data2Object.ToListDataTable( dataList.Tables[ 0 ] );
+                        var dataTable = Data2Object.ToListDataTable( dataList.Tables[ 0 ], window );
                         var objectList = Data2Object.Convert( dataTable, window );
                         Dispatcher.Invoke( (Action)delegate () {
                             pager.SetDataCount( int.Parse( dataCount.ToString() ) );
@@ -259,6 +261,7 @@ namespace MySqlDataView {
             };
 
             listView.ItemContainerStyle = Resources[ "ListViewItem" ] as Style;
+            listView.Style = Resources[ "ListView" ] as Style;
 
             return listView;
         }

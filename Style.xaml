@@ -46,4 +46,9 @@
     <Style TargetType="ListViewItem" x:Key="ListViewItem">
         <Setter Property="Height" Value="28" />
     </Style>
+
+    <Style TargetType="ListView" x:Key="ListView">
+        
+    </Style>
+
 </ResourceDictionary>

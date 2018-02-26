@@ -114,7 +114,7 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <ListView x:Name="ContentList">
+        <ListView x:Name="ContentList" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="显示全部" Click="MenuItem_Click_View_Html">
@@ -139,7 +139,7 @@
                             <GridViewColumnHeader Content="值" HorizontalContentAlignment="Left" Padding="10,0,0,0" />
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock  Text="{Binding Value}" Width="500"></TextBlock>
+                                    <TextBlock  Text="{Binding Value}"></TextBlock>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

@@ -7,11 +7,18 @@ using MySqlDataView.Logic;
 namespace MySqlDataView.Common {
     public class Data2Object {
 
-        public static DataTable ToListDataTable( DataTable dataTable ) {
+        public static DataTable ToListDataTable( DataTable dataTable, WindowObject window ) {
             foreach( DataRow row in dataTable.Rows ) {
                 foreach( DataColumn col in dataTable.Columns ) {
                     if( col.DataType.FullName == "System.String" ) {
-                        row[ col.ColumnName ] = Common.GetString( row[ col.ColumnName ].ToString(), 50 );
+                        var items = from windowItem in window.ListItems where windowItem.Name == col.ColumnName select windowItem;
+                        if( items.Count() > 0 ) {
+                            var windowItem = items.ElementAt( 0 );
+                            if( windowItem.DataType == WindowItemDataType.Html ) {
+                                row[ col.ColumnName ] = Common.FilterHtml( row[ col.ColumnName ].ToString() );
+                            }
+                        }
+                       // row[ col.ColumnName ] = Common.GetString( row[ col.ColumnName ].ToString(), 50 );
                     }
                 }
             }

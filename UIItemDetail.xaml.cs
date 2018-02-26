@@ -43,8 +43,6 @@ namespace MySqlDataView {
             }
         }
 
-         
-
         private List<Object> Dic2List( List<WindowItem> items, IDictionary<string, object> data ) {
             Func<String,String> getTitle = delegate (string key) {
                 var found = items.Find( windowItem => key == windowItem.Name );

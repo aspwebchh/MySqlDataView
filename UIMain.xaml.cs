@@ -41,11 +41,11 @@ namespace MySqlDataView {
         }
 
         private void LoadConfig() {
-            if( !File.Exists( "./config.xml" ) ) {
+            if( !File.Exists( "./config/config.xml" ) ) {
                 return;
             }
             try {
-                var config = XmlConfigParser.Parse( "./config.xml" );
+                var config = XmlConfigParser.Parse( "./config/config.xml" );
                 var dataSource = from product in config.Products
                                  select new {
                                      Name = product.Name,
@@ -69,18 +69,21 @@ namespace MySqlDataView {
         private void MenuItem_Click_LoadConfigFile( object sender, RoutedEventArgs e ) {
             var dialog = new WinForm.OpenFileDialog();
             dialog.Filter = "配置文件|*.xml";
-            dialog.Multiselect = false;
+            dialog.Multiselect = true;
             dialog.SupportMultiDottedExtensions = true;
             if( dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK ) {
                 var files = dialog.FileNames;
-                Handle( files[ 0 ] );
+                files.ToList().ForEach( Handle );
             }
         }
 
         private void Handle( string xmlConfigFilePath ) {
             try {
                 XmlConfigParser.Parse( xmlConfigFilePath );
-                File.Copy( xmlConfigFilePath, "./config.xml", true );
+                if( !Directory.Exists( "./config" ) ) {
+                    Directory.CreateDirectory( "./config" );
+                }
+                File.Copy( xmlConfigFilePath, "./config/config.xml", true );
                 LoadConfig();
                 MessageBox.Show( "加载成功" );
             } catch( XmlConfigParseError err ) {
