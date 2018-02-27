@@ -32,6 +32,10 @@ namespace MySqlDataView {
 
             this.window = window;
 
+            if( window.DetailItems.Count == 0 ) {
+                return;
+            }
+
             var fields = string.Join( ",", window.DetailItems.Select( item => item.Name ).ToArray() );
             var sql = "select " + fields + " from " + window.TableName + " where " + window.UniqueID + "=" + id;
             var result = DbHelperMySqL.Query( sql );

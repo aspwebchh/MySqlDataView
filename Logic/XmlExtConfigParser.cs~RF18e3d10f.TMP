@@ -20,8 +20,8 @@ namespace MySqlDataView.Logic {
             try {
                 var result = from element in doc.Descendants( "Item" )
                              select new KeyVal<string, string>(
-                                 element.Attribute( "Name" ).Value,
-                                 element.Attribute( "Value" ).Value );
+                                 element.Attribute( "Name" ).ToString(),
+                                 element.Attribute( "Value" ).ToString() );
                 return result.ToList();
             } catch(NullReferenceException) {
                 throw new XmlConfigParseError( "Item节点Name属性或者Value属性不存在" );

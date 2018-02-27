@@ -104,7 +104,7 @@ namespace MySqlDataView {
             tabItem.Header = tabTitle;
 
             tabItem.Content = stackPannel;
-            tabItem.MouseLeftButtonUp += delegate ( object sender, MouseButtonEventArgs e ) {
+            tabItem.MouseLeftButtonUp += delegate {
                 SetCurrTabState( window );
             };
 
@@ -117,13 +117,13 @@ namespace MySqlDataView {
                 list.Height = height - 25;
             };
 
-            tabItem.Loaded += delegate ( object sender, RoutedEventArgs e ) {
+            tabItem.Loaded += delegate {
                 resizeListView();
             };
 
             var tabWithListView = new TabWithListView();
             tabWithListView.TabItem = tabItem;
-            tabWithListView.ResizeListView = delegate () {
+            tabWithListView.ResizeListView = delegate {
                 resizeListView();
             };
             return tabWithListView;

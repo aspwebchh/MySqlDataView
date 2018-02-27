@@ -24,4 +24,8 @@ namespace MySqlDataView.Logic {
         Equals, Like,GT,LT, Null
     }
     #endregion
+
+    public enum ConfigFileType {
+        Main,Ext,Unkown
+    }
 }

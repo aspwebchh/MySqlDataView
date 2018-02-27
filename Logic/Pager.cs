@@ -77,12 +77,14 @@ namespace MySqlDataView.Logic {
         private void  Reset() {
             uiContent.rCurrent.Text = "0";
             uiContent.rTotal.Text = "0";
+            uiContent.rDataCount.Text = "0";
         }
 
         public virtual void Render() {
             Reset();
             uiContent.rCurrent.Text = this.currPageIndex.ToString();
             uiContent.rTotal.Text = PageCount.ToString();
+            uiContent.rDataCount.Text = this.dataCount.ToString();
         }
 
         public void SetCurrPageIndex( int pageIndex ) {
@@ -126,19 +128,19 @@ namespace MySqlDataView.Logic {
 
     public class NullPager : Pager {
         public override void First() {
-            MessageBox.Show( "page 1" );
+            MessageBox.Show( "空" );
         }
 
         public override void Last() {
-            
+            MessageBox.Show( "空" );
         }
 
         public override void Next() {
-            
+            MessageBox.Show( "空" );
         }
 
         public override void Prev() {
-            
+            MessageBox.Show( "空" );
         }
 
         public override void Render() {

@@ -47,7 +47,7 @@ namespace MySqlDataView {
             try {
                 XmlConfigParser.LoadExtConfigFn = delegate ( string extFile ) {
                     var lxcr = new LoadExtConfigResult();
-                    var extPath = "./config/" + extFile;
+                    var extPath = "./" + extFile;
                     try {
                         var data = XmlExtConfigParser.Parse( extPath );
                         lxcr.Success = true;
@@ -91,9 +91,6 @@ namespace MySqlDataView {
         }
 
         private void Handle( string[] files ) {
-            const int CONFIG_FILE_TYPE_MAIN = 1;
-            const int CONFIG_FILE_TYPE_EXT = 2;
-
             var resultPath = new List<dynamic>();
             XmlConfigParser.LoadExtConfigFn = delegate ( string extFile ) {
                 var lxcr = new LoadExtConfigResult();
@@ -109,7 +106,7 @@ namespace MySqlDataView {
                         lxcr.Data = data;
                         resultPath.Add( new {
                             Path = extPath,
-                            Type = CONFIG_FILE_TYPE_EXT
+                            Type = 2
                         } );
                     } catch( Exception e ) {
                         lxcr.Success = false;
@@ -125,7 +122,7 @@ namespace MySqlDataView {
                         XmlConfigParser.Parse( path );
                         resultPath.Add( new {
                             Path = path,
-                            Type = CONFIG_FILE_TYPE_MAIN
+                            Type = 1
                         } );
                     } catch( Exception e) {
                         MessageBox.Show( e.Message );
@@ -145,14 +142,64 @@ namespace MySqlDataView {
             }
 
             foreach( var item in resultPath ) {
-                if( item.Type == CONFIG_FILE_TYPE_MAIN ) {
+                if( item.Type == 1 ) {
                     File.Copy( item.Path, "./config/config.xml", true );
-                } else if( item.Type == CONFIG_FILE_TYPE_EXT ) {
+                } else if( item.Type == 2 ) {
                     File.Copy( item.Path, "./config/" + System.IO.Path.GetFileName( item.Path ), true );
                 }
             }
             LoadConfig();
             MessageBox.Show( "加载成功" );
+
+
+
+            //var checkResult = files.Select( xmlConfigFilePath => {
+            //    try {
+            //        XmlConfigParser.Parse( xmlConfigFilePath );
+            //        return new {
+            //            Code = 1,
+            //            Path = xmlConfigFilePath
+            //        };
+            //    } catch( Exception ) {
+            //        try {
+            //            XmlExtConfigParser.Parse( xmlConfigFilePath );
+            //            return new {
+            //                Code = 2,
+            //                Path = xmlConfigFilePath
+            //            };
+            //        } catch( Exception ) {
+            //            return new {
+            //                Code = -1,
+            //                Path = xmlConfigFilePath
+            //            };
+            //        }
+            //    }
+            //} );
+
+            //var mainCount = checkResult.Where( item => item.Code == 1 ).Count();
+            //var extCount = checkResult.Where( item => item.Code == 2 ).Count();
+            //var invalidCount = checkResult.Where( item => item.Code == -1 ).Count();
+            //if( mainCount != 1 ) {
+            //    MessageBox.Show( "主配置文件格式不正确" );
+            //    return;
+            //}
+            //if( invalidCount > 0 ) {
+            //    MessageBox.Show( "存在格式不正确配置文件" );
+            //    return;
+            //}
+            //if( !Directory.Exists( "./config" ) ) {
+            //    Directory.CreateDirectory( "./config" );
+            //}
+
+            //foreach( var item in checkResult ) {
+            //    if( item.Code == 1 ) {
+            //        File.Copy( item.Path, "./config/config.xml", true );
+            //    } else if( item.Code == 2 ) {
+            //        File.Copy( item.Path, "./config/" + System.IO.Path.GetFileName( item.Path ), true );
+            //    }
+            //}
+            //LoadConfig();
+            //MessageBox.Show( "加载成功" );
         }
     }
 }

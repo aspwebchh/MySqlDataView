@@ -10,7 +10,25 @@ using System.Windows;
 namespace MySqlDataView.Logic {
     public class XmlConfigParser {
 
-        public static Config Parse( string xmlFilePath ) {
+        public static ConfigFileType FileType(string path) {
+            try {
+                var doc = new XmlDocument();
+                doc.Load( path );
+                var root = doc.DocumentElement as XmlElement;
+                if( root.Name == "Config" ) {
+                    return ConfigFileType.Main;
+                } else if( root.Name == "Items" ) {
+                    return ConfigFileType.Ext;
+                } else {
+                    return ConfigFileType.Unkown;
+                }
+            } catch(Exception) {
+                return ConfigFileType.Unkown;
+            }
+        }
+
+        public static Func<string, LoadExtConfigResult> LoadExtConfigFn; 
+        public static Config Parse( string xmlFilePath) {
             var doc = new XmlDocument();
             doc.Load( xmlFilePath );
 
@@ -169,6 +187,20 @@ namespace MySqlDataView.Logic {
                         var strName = childItem.GetAttribute( "Name" );
                         var strValue = childItem.GetAttribute( "Value" );
                         item.Contents.Add( new KeyVal<string, string>( strName, strValue ) );
+                    }
+                }
+
+                if( ele.HasAttribute( "From" ) ) {
+                    var path = ele.GetAttribute( "From" );
+                    if( LoadExtConfigFn != null ) {
+                        var result = LoadExtConfigFn( path );
+                        var dataList = result.Data;
+                        var message = result.Message;
+                        var success = result.Success;
+                        if( !success ) {
+                            throw new XmlConfigParseError( message );
+                        }
+                        item.Contents.AddRange( dataList );
                     }
                 }
             } else {

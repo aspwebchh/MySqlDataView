@@ -74,11 +74,13 @@
     <Compile Include="Logic\Config.cs" />
     <Compile Include="Logic\FormFieldFactory.cs" />
     <Compile Include="Logic\KeyVal.cs" />
+    <Compile Include="Logic\LoadExtConfigResult.cs" />
     <Compile Include="Logic\Pager.cs" />
     <Compile Include="Logic\Product.cs" />
     <Compile Include="Logic\TabWithListView.cs" />
     <Compile Include="Logic\Types.cs" />
     <Compile Include="Logic\WhereGenerator.cs" />
+    <Compile Include="Logic\XmlExtConfigParser.cs" />
     <Compile Include="UIContent.xaml.cs">
       <DependentUpon>UIContent.xaml</DependentUpon>
     </Compile>
