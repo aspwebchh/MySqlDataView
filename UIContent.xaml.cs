@@ -11,9 +11,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Threading;
+using System.Threading.Tasks;
 using MySqlDataView.Logic;
 using MySqlDataView.Common;
 using System.Data;
+using System.IO;
+using WinForm = System.Windows.Forms;
 
 namespace MySqlDataView {
     /// <summary>
@@ -46,9 +49,9 @@ namespace MySqlDataView {
             };
         }
 
-        private void SetCurrTabState(WindowObject window) {
+        private void SetCurrTabState( WindowObject window ) {
             currWindow = window;
-            Pager.Get(product, window, this).Render();
+            Pager.Get( product, window, this ).Render();
         }
 
         private void InitNavMenu() {
@@ -58,13 +61,13 @@ namespace MySqlDataView {
                 treeViewItem.Header = item.Title;
                 treeViewItem.Style = Resources[ "TreeViewItem" ] as Style;
                 treeViewItem.Selected += delegate ( object sender, RoutedEventArgs e ) {
-                    SetCurrTabState(item);
+                    SetCurrTabState( item );
 
                     TabItem tabItem;
                     if( tabItems.ContainsKey( item ) ) {
                         tabItem = tabItems[ item ];
                     } else {
-                        var tabWithListView = NewTabItem( item,delegate(TabItem removeTarget) {
+                        var tabWithListView = NewTabItem( item, delegate ( TabItem removeTarget ) {
                             Contents.Items.Remove( removeTarget );
                             tabItems.Remove( item );
                             tabList.Remove( item );
@@ -84,18 +87,77 @@ namespace MySqlDataView {
 
         private TabWithListView NewTabItem( WindowObject window, Action<TabItem> onRemove ) {
             var stackPannel = new StackPanel();
-            var form = NewFilterForm(window);
-            var list = NewTabItemList(window);
-            stackPannel.Children.Add(form);
+            var form = NewFilterForm( window );
+            var list = window.ListView = NewTabItemList( window );
+            stackPannel.Children.Add( form );
             stackPannel.Children.Add( list );
+
             var tabItem = new TabItem();
             var contextMenu = new ContextMenu();
+
+            #region
+            //关闭
             var closeItem = new MenuItem();
             closeItem.Header = "关闭";
-            closeItem.Click += delegate ( object sender, RoutedEventArgs e ) {
+            closeItem.Click += delegate {
                 onRemove( tabItem );
             };
             contextMenu.Items.Add( closeItem );
+
+            //导出
+            Action<string> exportHandle = path => {
+                var cols = string.Join( ",", window.ExportItems.Select( item => item.Name ).ToArray() );
+                var sql = "select " + cols + " from " + window.TableName;
+                var countSql = "select count(*) from " + window.TableName;
+                if( !string.IsNullOrEmpty( where ) ) {
+                    sql += " where " + where;
+                    countSql += " where " + where;
+                }
+                try {
+                    var countTask = DbHelperMySqL.GetSingleAsync( countSql );
+                    var dataTask = DbHelperMySqL.QueryAsync( sql );
+                    var count = Convert.ToInt32( countTask.Result.ToString() );
+                    if( count > 10000 ) {
+                        MessageBox.Show( "最多只能导出10000条" );
+                        return;
+                    }
+                    var ds = dataTask.Result;
+                    var dt = Data2Object.ToListDataTable( ds.Tables[ 0 ], window );
+                    var objList = Data2Object.Convert( dt, window );
+                    ExportExcel.Export( objList, window.Title, window.ExportItems, path );
+                    MessageBox.Show( "导出完成" );
+                } catch( Exception e ) {
+                    MessageBox.Show( e.Message );
+                }
+
+            };
+
+            var exportItem = new MenuItem();
+            exportItem.Header = "导出";
+            exportItem.Click += delegate {
+                var exportItems = window.ExportItems;
+                if( exportItems.Count == 0 ) {
+                    MessageBox.Show( "未配置导出项" );
+                    return;
+                }
+
+                var sfd = new WinForm.SaveFileDialog();
+                sfd.Filter = "Excel2007文档|*.xlsx";
+                sfd.FileName = window.Title;
+                if( sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK ) {
+                    var filePath = string.Empty;
+                    using( var fs = (FileStream)sfd.OpenFile() ) {
+                        filePath = fs.Name;
+                    }
+                    Task.Factory.StartNew( () => {
+                        exportHandle( filePath );
+                    } );
+
+                }
+            };
+            contextMenu.Items.Add( exportItem );
+
+            #endregion
 
             TextBlock tabTitle = new TextBlock();
             tabTitle.Text = window.Title;
@@ -113,7 +175,7 @@ namespace MySqlDataView {
                 //不知何故，窗口全屏状态下高度值计算出错
                 if( this.WindowState == WindowState.Maximized ) {
                     height -= 10;
-                } 
+                }
                 list.Height = height - 25;
             };
 
@@ -137,19 +199,19 @@ namespace MySqlDataView {
                 return wrapPannel;
             }
             foreach( var item in filterItems ) {
-                wrapPannel.Children.Add(NewFilterFormField(item));
+                wrapPannel.Children.Add( NewFilterFormField( item ) );
             }
             var filterBtn = new Button();
             filterBtn.Style = Resources[ "FormFieldButton" ] as Style;
             filterBtn.Content = "筛选";
             filterBtn.Width = 50;
             filterBtn.Click += delegate ( object sender, RoutedEventArgs e ) {
-                where = WhereGenerator.GetWhere(wrapPannel);
-                var pager = Pager.Get(product, window, this);
-                pager.SetCurrPageIndex(1);
+                where = WhereGenerator.GetWhere( wrapPannel );
+                var pager = Pager.Get( product, window, this );
+                pager.SetCurrPageIndex( 1 );
                 pager.PageChange();
             };
-            wrapPannel.Children.Add(filterBtn);
+            wrapPannel.Children.Add( filterBtn );
 
 
             var resetBtn = new Button();
@@ -157,18 +219,18 @@ namespace MySqlDataView {
             resetBtn.Content = "重置";
             resetBtn.Width = 50;
             resetBtn.Click += delegate ( object sender, RoutedEventArgs e ) {
-                WhereGenerator.ClearFilterFormField(wrapPannel);
+                WhereGenerator.ClearFilterFormField( wrapPannel );
                 where = "";
-                var pager = Pager.Get(product, window, this);
-                pager.SetCurrPageIndex(1);
+                var pager = Pager.Get( product, window, this );
+                pager.SetCurrPageIndex( 1 );
                 pager.PageChange();
             };
-            wrapPannel.Children.Add(resetBtn);
+            wrapPannel.Children.Add( resetBtn );
 
             return wrapPannel;
         }
 
-        private WrapPanel NewFilterFormField(WindowItem windowItem) {
+        private WrapPanel NewFilterFormField( WindowItem windowItem ) {
             var wrapPannel = new WrapPanel();
             var title = FormFieldFactory.TextBlock( windowItem );
             title.Style = Resources[ "FormFieldTitle" ] as Style;
@@ -209,7 +271,7 @@ namespace MySqlDataView {
                 var dtpl = new DataTemplate();
                 var fef = new FrameworkElementFactory( typeof( TextBlock ) );
                 fef.SetBinding( TextBlock.TextProperty, binding );
-                fef.SetValue( TextBlock.PaddingProperty, listViewItemPadding);
+                fef.SetValue( TextBlock.PaddingProperty, listViewItemPadding );
                 fef.SetValue( TextBlock.TextAlignmentProperty, TextAlignment.Center );
                 dtpl.VisualTree = fef;
                 column.CellTemplate = dtpl;
@@ -219,7 +281,7 @@ namespace MySqlDataView {
 
             Pager pager = Pager.NewOrGet( product, currWindow, this );
 
-            var fields = string.Join(",", window.ListItems.Select( item => item.Name ).ToArray());
+            var fields = string.Join( ",", window.ListItems.Select( item => item.Name ).ToArray() );
             fields += "," + window.UniqueID;
             pager.OnPageChanged += delegate () {
                 ThreadPool.QueueUserWorkItem( delegate ( object state ) {
@@ -242,7 +304,7 @@ namespace MySqlDataView {
                             pager.Render();
                             listView.ItemsSource = objectList;
                         } );
-                    } catch(Exception ex) {
+                    } catch( Exception ex ) {
                         MessageBox.Show( ex.Message );
                     }
                 } );
@@ -255,7 +317,7 @@ namespace MySqlDataView {
                 if( selectedItem == null ) {
                     return;
                 }
-                var uiItemDetail = new UIItemDetail( window, selectedItem[window.UniqueID].ToString() );
+                var uiItemDetail = new UIItemDetail( window, selectedItem[ window.UniqueID ].ToString() );
                 uiItemDetail.Owner = this;
                 uiItemDetail.ShowDialog();
             };
@@ -266,20 +328,28 @@ namespace MySqlDataView {
             return listView;
         }
 
+        private void ToTopOnListView() {
+            currWindow.ListView.ScrollIntoView( currWindow.ListView.Items[ 0 ] );
+        }
+
         private void FirstPageButton_Click( object sender, RoutedEventArgs e ) {
-            Pager.Get( product, currWindow , this).First();
+            Pager.Get( product, currWindow, this ).First();
+            ToTopOnListView();
         }
 
         private void PreviousPageButton_Click( object sender, RoutedEventArgs e ) {
-            Pager.Get( product, currWindow , this).Prev();
+            Pager.Get( product, currWindow, this ).Prev();
+            ToTopOnListView();
         }
 
         private void NextPageButton_Click( object sender, RoutedEventArgs e ) {
-            Pager.Get( product, currWindow , this).Next();
+            Pager.Get( product, currWindow, this ).Next();
+            ToTopOnListView();
         }
 
         private void LastPageButton_Click( object sender, RoutedEventArgs e ) {
-            Pager.Get( product, currWindow , this).Last();
+            Pager.Get( product, currWindow, this ).Last();
+            ToTopOnListView();
         }
     }
 }

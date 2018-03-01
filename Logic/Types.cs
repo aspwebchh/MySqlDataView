@@ -13,7 +13,7 @@ namespace MySqlDataView.Logic {
 
     #region
     public enum WindowItemType {
-        FilterItem, ListItem, DetailItem
+        FilterItem, ListItem, DetailItem, ExportItem
     }
 
     public enum WindowItemDataType {

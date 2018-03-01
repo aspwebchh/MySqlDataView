@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace MySqlDataView.Logic {
     public class WindowObject {
@@ -9,6 +11,10 @@ namespace MySqlDataView.Logic {
             this.Items = new List<WindowItem>();
         }
 
+
+       public ListView ListView {
+            get;set;
+        }
 
         public string TableName {
             get;
@@ -55,6 +61,12 @@ namespace MySqlDataView.Logic {
         public List<WindowItem> DetailItems {
             get {
                 return Items.Where( item => item.ItemType == WindowItemType.DetailItem ).ToList();
+            }
+        }
+
+        public List<WindowItem> ExportItems {
+            get {
+                return Items.Where( item => item.ItemType == WindowItemType.ExportItem ).ToList();
             }
         }
 

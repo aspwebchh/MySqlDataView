@@ -41,11 +41,13 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
@@ -72,6 +74,7 @@
     <Compile Include="Common\Data2Object.cs" />
     <Compile Include="Common\DbHelperMySql.cs" />
     <Compile Include="Logic\Config.cs" />
+    <Compile Include="Logic\ExportExcel.cs" />
     <Compile Include="Logic\FormFieldFactory.cs" />
     <Compile Include="Logic\KeyVal.cs" />
     <Compile Include="Logic\LoadExtConfigResult.cs" />

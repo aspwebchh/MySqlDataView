@@ -25,6 +25,7 @@ namespace MySqlDataView {
 
         private static UIMain instance;
 
+
         public static void HideWindow() {
             instance.Hide();
         }

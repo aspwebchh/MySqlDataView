@@ -25,7 +25,7 @@ namespace MySqlDataView.Common {
             return dataTable;
         }
 
-        public static List<Object> Convert(DataTable data) {
+        private static List<Object> Convert(DataTable data) {
             var objectList = new List<Object>();
             foreach( DataRow row in data.Rows ) {
                 var dataItem = new System.Dynamic.ExpandoObject();

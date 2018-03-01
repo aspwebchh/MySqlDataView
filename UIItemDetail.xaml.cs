@@ -40,7 +40,7 @@ namespace MySqlDataView {
             var sql = "select " + fields + " from " + window.TableName + " where " + window.UniqueID + "=" + id;
             var result = DbHelperMySqL.Query( sql );
             if( result.Tables[ 0 ].Rows.Count > 0 ) {
-                var dicList = Data2Object.Convert( result.Tables[ 0 ] );
+                var dicList = Data2Object.Convert( result.Tables[ 0 ],window );
                 var oneDic = sourceData = dicList[ 0 ] as IDictionary<string, object>;
                 var objList = Dic2List( window.DetailItems, oneDic );
                 ContentList.ItemsSource = objList;

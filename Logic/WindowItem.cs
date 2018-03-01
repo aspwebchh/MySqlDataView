@@ -62,6 +62,8 @@ namespace MySqlDataView.Logic {
                 return WindowItemType.ListItem;
             } else if( itemType == "DetailItem" ) {
                 return WindowItemType.DetailItem;
+            } else if( itemType == "ExportItem" ) {
+                return WindowItemType.ExportItem;
             } else {
                 throw new XmlConfigParseError( "ItemType类型不存在" );
             }
