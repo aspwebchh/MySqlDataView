@@ -27,11 +27,20 @@ namespace MySqlDataView.Logic {
             }
         }
 
-        public static Func<string, LoadExtConfigResult> LoadExtConfigFn; 
-        public static Config Parse( string xmlFilePath) {
+        public static Func<string, LoadExtConfigResult> LoadExtConfigFn;
+        public static Config Parse( string xmlFilePath ) {
             var doc = new XmlDocument();
             doc.Load( xmlFilePath );
 
+            var config = new Config();
+            config.Products = GetProducts( doc );
+            return config;
+        }
+
+        public static Config ParseUrl( string url ) {
+            var xml = Common.Common.ReadUrlContent( url );
+            var doc = new XmlDocument();
+            doc.LoadXml( xml );
             var config = new Config();
             config.Products = GetProducts( doc );
             return config;
@@ -55,6 +64,20 @@ namespace MySqlDataView.Logic {
             return products;
         }
 
+        private static List<ConnectionString> GetConnectionStrings(XmlElement productNode) {
+            var result = new List<ConnectionString>();
+            var connectionStringElements = productNode.GetElementsByTagName( "ConnectionString" );
+            foreach( XmlElement node in connectionStringElements ) {
+                var name = node.GetAttribute( "Name" );
+                var value = node.InnerText;
+                result.Add( new ConnectionString {
+                    Name = name,
+                    Value = value
+                } );
+            }
+            return result;
+        }
+
         private static Product GetProduct( XmlNode node ) {
             var ele = node as XmlElement;
             var name = ele.GetAttribute( "Name" );
@@ -65,9 +88,19 @@ namespace MySqlDataView.Logic {
             product.ID = id;
             product.Name = name;
             product.ConnectionString = connectionString;
+            GetConnectionStrings( node as XmlElement ).ForEach( product.ConnectionStrings.Add );
 
-            if( node.ChildNodes.Count > 0 ) {
-                var uniqueGroupElement = node.ChildNodes[ 0 ] as XmlElement;
+            if( string.IsNullOrWhiteSpace( product.ConnectionString ) && product.ConnectionStrings.Count == 0 ) {
+                throw new XmlConfigParseError( "未指定数据库连接字符串" );
+            }
+
+            //if( !string.IsNullOrWhiteSpace( product.ConnectionString ) && product.ConnectionStrings.Count > 0 ) {
+            //    throw new XmlConfigParseError( "数据库连接字符串重复指定" );
+            //}
+
+            var groupEle = ele.GetElementsByTagName( "WindowGroup" );
+            if( groupEle.Count > 0 ) {
+                var uniqueGroupElement = groupEle[ 0 ] as XmlElement;
                 product.WindowGroup = GetGroup( uniqueGroupElement );
             } else {
                  throw new XmlConfigParseError( "WindowGroup节点不存在" );

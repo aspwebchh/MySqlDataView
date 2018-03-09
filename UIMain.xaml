@@ -25,7 +25,8 @@
         
         <Menu Grid.Row="0" Grid.Column="0">
             <MenuItem Header="文件(F)">
-                <MenuItem Header="加载配置文件" Click="MenuItem_Click_LoadConfigFile"></MenuItem>
+                <MenuItem Header="加载本地配置文件" Click="MenuItem_Click_LoadConfigFile"></MenuItem>
+                <MenuItem Header="加载网络配置文件" Click="MenuItem_Click_LoadConfigFile_From_Network"></MenuItem>
             </MenuItem>
         </Menu>
         

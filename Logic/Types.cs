@@ -28,4 +28,8 @@ namespace MySqlDataView.Logic {
     public enum ConfigFileType {
         Main,Ext,Unkown
     }
+
+    public enum DatabaseMode {
+        Single, Multiple
+    }
 }

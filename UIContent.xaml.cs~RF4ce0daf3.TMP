@@ -209,9 +209,6 @@ namespace MySqlDataView {
             if( filterItems.Count == 0 ) {
                 return wrapPannel;
             }
-            if( databaseMode == DatabaseMode.Multiple ) {
-                wrapPannel.Children.Add( NewFilterFormField( DatabaseSelectorItem() ) );
-            }
             foreach( var item in filterItems ) {
                 wrapPannel.Children.Add( NewFilterFormField( item ) );
             }
@@ -220,14 +217,6 @@ namespace MySqlDataView {
             filterBtn.Content = "筛选";
             filterBtn.Width = 50;
             filterBtn.Click += delegate ( object sender, RoutedEventArgs e ) {
-                if( databaseMode == DatabaseMode.Multiple ) {
-                    var connString = WhereGenerator.GetConnectionString( wrapPannel );
-                    if( string.IsNullOrEmpty( connString ) ) {
-                        MessageBox.Show( "未选择数据库" );
-                        return;
-                    }
-                    DbHelperMySqL.ConnectionString = connString;
-                }
                 where = WhereGenerator.GetWhere( wrapPannel );
                 var pager = Pager.Get( product, window, this );
                 pager.SetCurrPageIndex( 1 );
@@ -248,20 +237,17 @@ namespace MySqlDataView {
                 pager.PageChange();
             };
             wrapPannel.Children.Add( resetBtn );
+
             return wrapPannel;
         }
 
         private WindowItem DatabaseSelectorItem() {
-            var contents = product.ConnectionStrings.Select( item => {
-                return new KeyVal<string, string>( item.Name, item.Value );
-            } );
-            var windowItem = new WindowItemForDatabase();
+            var windowItem = new WindowItem();
             windowItem.Title = "数据库";
-            windowItem.Name = WindowItemForDatabase.FIELD_NAME;
+            windowItem.Name = "Database";
             windowItem.MatchType = WindowItemMatchType.Equals;
             windowItem.ItemType = WindowItemType.FilterItem;
             windowItem.DataType = WindowItemDataType.String;
-            windowItem.Contents.AddRange(contents);
             return windowItem;
         }
 

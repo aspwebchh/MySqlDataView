@@ -80,6 +80,9 @@ namespace MySqlDataView.Logic {
             Dictionary<WindowItem, string> formFieldsData = GetFilterFormFieldResult(element);
             var where = " 1=1 ";
             foreach( var key in formFieldsData.Keys ) {
+                if( key is WindowItemForDatabase ) {
+                    continue;
+                }
                 var val = formFieldsData [key];
                 var matchType = key.MatchType;
                 var op = GetOperator( matchType );
@@ -87,6 +90,17 @@ namespace MySqlDataView.Logic {
                 where += " and " + key.Name  + op + right;
             }
             return where;
+        }
+
+        public static string GetConnectionString( FrameworkElement element ) {
+            Dictionary<WindowItem, string> formFieldsData = GetFilterFormFieldResult( element );
+            foreach( var key in formFieldsData.Keys ) {
+                if( key is WindowItemForDatabase ) {
+                    var val = formFieldsData[ key ];
+                    return val;
+                }
+            }
+            return string.Empty;
         }
     }
 }

@@ -7,8 +7,7 @@ using System.Text;
 
 namespace MySqlDataView.Logic {
     public class XmlExtConfigParser {
-        public static List<KeyVal<string, string>> Parse( string xmlFilePath ){
-            var doc = XDocument.Load( xmlFilePath );
+        private static List<KeyVal<string, string>> Parse( XDocument doc ) {
             var root = doc.Element( "Items" );
             if( root == null ) {
                 throw new XmlConfigParseError( "Items节点不存在" );
@@ -23,11 +22,21 @@ namespace MySqlDataView.Logic {
                                  element.Attribute( "Name" ).Value,
                                  element.Attribute( "Value" ).Value );
                 return result.ToList();
-            } catch(NullReferenceException) {
+            } catch( NullReferenceException ) {
                 throw new XmlConfigParseError( "Item节点Name属性或者Value属性不存在" );
-            } catch(Exception e) {
+            } catch( Exception e ) {
                 throw new XmlConfigParseError( e.Message );
             }
+        }
+
+        public static List<KeyVal<string, string>> Parse( string xmlFilePath ) {
+            var doc = XDocument.Load( xmlFilePath );
+            return Parse( doc );
+        }
+
+        public static List<KeyVal<string, string>> ParseUrl( string url ) {
+            var doc = XDocument.Load( url );
+            return Parse( doc );
         }
     }
 }

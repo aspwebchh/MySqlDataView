@@ -8,6 +8,7 @@ using System.Windows.Controls;
 namespace MySqlDataView.Logic {
     public class WindowObject {
         public WindowObject() {
+            this.InitialLoading = false;
             this.Items = new List<WindowItem>();
         }
 
@@ -78,6 +79,10 @@ namespace MySqlDataView.Logic {
             } else {
                 throw new XmlConfigParseError("Window类型不存在");
             }
+        }
+
+        public bool InitialLoading {
+            get;set;
         }
     }
 }

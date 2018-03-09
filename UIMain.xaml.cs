@@ -38,10 +38,17 @@ namespace MySqlDataView {
         public UIMain() {
             InitializeComponent();
             LoadConfig();
+            Content.MouseDoubleClick += delegate ( object sender, MouseButtonEventArgs e ) {
+                var selectItem = Content.SelectedValue as Product;
+                var content = new UIContent( selectItem, selectItem.WindowGroup );
+                content.Owner = this;
+                content.Show();
+                UIMain.HideWindow();
+            };
             instance = this;
         }
 
-        private void LoadConfig() {
+        public void LoadConfig() {
             if( !File.Exists( "./config/config.xml" ) ) {
                 return;
             }
@@ -68,13 +75,6 @@ namespace MySqlDataView {
                 Content.ItemsSource = dataSource;
                 Content.DisplayMemberPath = "Name";
                 Content.SelectedValuePath = "Value";
-                Content.MouseDoubleClick += delegate ( object sender, MouseButtonEventArgs e ) {
-                    var selectItem = Content.SelectedValue as Product;
-                    var content = new UIContent( selectItem, selectItem.WindowGroup );
-                    content.Owner = this;
-                    content.Show();
-                    UIMain.HideWindow();
-                };
             } catch(XmlConfigParseError e) {
                 MessageBox.Show( "配置文件解析异常：" +  e.Message );
             }
@@ -92,9 +92,6 @@ namespace MySqlDataView {
         }
 
         private void Handle( string[] files ) {
-            const int CONFIG_FILE_TYPE_MAIN = 1;
-            const int CONFIG_FILE_TYPE_EXT = 2;
-
             var resultPath = new List<dynamic>();
             XmlConfigParser.LoadExtConfigFn = delegate ( string extFile ) {
                 var lxcr = new LoadExtConfigResult();
@@ -110,7 +107,7 @@ namespace MySqlDataView {
                         lxcr.Data = data;
                         resultPath.Add( new {
                             Path = extPath,
-                            Type = CONFIG_FILE_TYPE_EXT
+                            Type = ConfigFileType.Ext
                         } );
                     } catch( Exception e ) {
                         lxcr.Success = false;
@@ -126,7 +123,7 @@ namespace MySqlDataView {
                         XmlConfigParser.Parse( path );
                         resultPath.Add( new {
                             Path = path,
-                            Type = CONFIG_FILE_TYPE_MAIN
+                            Type = ConfigFileType.Main
                         } );
                     } catch( Exception e) {
                         MessageBox.Show( e.Message );
@@ -146,14 +143,20 @@ namespace MySqlDataView {
             }
 
             foreach( var item in resultPath ) {
-                if( item.Type == CONFIG_FILE_TYPE_MAIN ) {
+                if( item.Type == ConfigFileType.Main ) {
                     File.Copy( item.Path, "./config/config.xml", true );
-                } else if( item.Type == CONFIG_FILE_TYPE_EXT ) {
+                } else if( item.Type == ConfigFileType.Ext ) {
                     File.Copy( item.Path, "./config/" + System.IO.Path.GetFileName( item.Path ), true );
                 }
             }
             LoadConfig();
             MessageBox.Show( "加载成功" );
+        }
+
+        private void MenuItem_Click_LoadConfigFile_From_Network( object sender, RoutedEventArgs e ) {
+            var window = new UILoadConfigFromNetwork();
+            window.Owner = this;
+            window.ShowDialog();
         }
     }
 }

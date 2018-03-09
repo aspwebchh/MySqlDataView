@@ -74,6 +74,7 @@
     <Compile Include="Common\Data2Object.cs" />
     <Compile Include="Common\DbHelperMySql.cs" />
     <Compile Include="Logic\Config.cs" />
+    <Compile Include="Logic\ConnectionString.cs" />
     <Compile Include="Logic\ExportExcel.cs" />
     <Compile Include="Logic\FormFieldFactory.cs" />
     <Compile Include="Logic\KeyVal.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="UIContent.xaml.cs">
       <DependentUpon>UIContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Logic\WindowItemForDatabase.cs" />
     <Page Include="Style.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -100,6 +102,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UIItemDetail.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UILoadConfigFromNetwork.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -121,6 +127,9 @@
     </Compile>
     <Compile Include="UIItemDetail.xaml.cs">
       <DependentUpon>UIItemDetail.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UILoadConfigFromNetwork.xaml.cs">
+      <DependentUpon>UILoadConfigFromNetwork.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIMain.xaml.cs">
       <DependentUpon>UIMain.xaml</DependentUpon>

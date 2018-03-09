@@ -5,6 +5,8 @@ using System.Text;
 
 namespace MySqlDataView.Logic {
     public class Product {
+        private List<ConnectionString> connectionStrings = new List<Logic.ConnectionString>();
+
         public String Name {
             get; set;
         }
@@ -23,6 +25,12 @@ namespace MySqlDataView.Logic {
 
         public override string ToString() {
             return  "name:" + Name + "\n" + "connectionString:" + ConnectionString + "\nID：" + ID ;
+        }
+
+        public List<ConnectionString> ConnectionStrings {
+            get {
+                return connectionStrings;
+            }
         }
     }
 }
