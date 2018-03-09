@@ -132,7 +132,7 @@ namespace MySqlDataView {
                 }
             }
 
-            var mainConfigFileExist = resultPath.Where( item => item.Type == 1 ).Count() > 0;
+            var mainConfigFileExist = resultPath.Where( item => item.Type == ConfigFileType.Main ).Count() > 0;
             if( !mainConfigFileExist ) {
                 MessageBox.Show( "加载失败" );
                 return;

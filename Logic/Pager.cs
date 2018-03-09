@@ -74,7 +74,7 @@ namespace MySqlDataView.Logic {
             }
         }
 
-        private void  Reset() {
+        public void  Reset() {
             uiContent.rCurrent.Text = "0";
             uiContent.rTotal.Text = "0";
             uiContent.rDataCount.Text = "0";

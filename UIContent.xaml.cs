@@ -42,6 +42,9 @@ namespace MySqlDataView {
 
             Closed += delegate ( object sender, EventArgs e ) {
                 UIMain.ShowWindow();
+                windowGroup.Items.ForEach( item => {
+                    item.InitialLoading = false;
+                } );
             };
         }
 
