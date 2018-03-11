@@ -42,6 +42,7 @@ namespace MySqlDataView {
 
             Closed += delegate ( object sender, EventArgs e ) {
                 UIMain.ShowWindow();
+                Pager.ClearPageList();
                 windowGroup.Items.ForEach( item => {
                     item.InitialLoading = false;
                 } );
@@ -244,11 +245,17 @@ namespace MySqlDataView {
             resetBtn.Content = "重置";
             resetBtn.Width = 50;
             resetBtn.Click += delegate ( object sender, RoutedEventArgs e ) {
+                if( databaseMode == DatabaseMode.Multiple ) {
+                    currWindow.ListView.ItemsSource = null;
+                }
                 WhereGenerator.ClearFilterFormField( wrapPannel );
                 where = "";
                 var pager = Pager.Get( product, window, this );
                 pager.SetCurrPageIndex( 1 );
-                pager.PageChange();
+                if( databaseMode == DatabaseMode.Single ) {
+                    pager.PageChange();
+                }
+               
             };
             wrapPannel.Children.Add( resetBtn );
             return wrapPannel;

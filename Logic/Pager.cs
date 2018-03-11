@@ -39,6 +39,10 @@ namespace MySqlDataView.Logic {
             return new NullPager();
         }
 
+        public static void ClearPageList() {
+            pagerList.Clear();
+        }
+
 
         public event PageChanged OnPageChanged;
 
