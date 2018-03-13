@@ -28,14 +28,13 @@ namespace MySqlDataView {
         private WindowObject currWindow;
         private string where = "";
         private Dictionary<WindowObject, TabWithListView> tabList = new Dictionary<WindowObject, TabWithListView>();
-        private DatabaseMode databaseMode;
+        private DatabaseType databaseType;
 
-        public UIContent( Product product, WindowGroup group ) {
-            this.databaseMode = GetDatabaseMode( product );
+        public UIContent( Product product, WindowGroup group, DatabaseType databaseType ) {
+            this.databaseType = databaseType;
             this.Title = product.Name;
             this.product = product;
             this.windowGroup = group;
-            DbHelperMySqL.ConnectionString = product.ConnectionString;
             InitializeComponent();
             this.InitNavMenu();
             this.InitListViewSize();
@@ -47,14 +46,6 @@ namespace MySqlDataView {
                     item.InitialLoading = false;
                 } );
             };
-        }
-
-        private DatabaseMode GetDatabaseMode( Product product ) {
-            if( product.ConnectionStrings.Count > 0 ) {
-                return DatabaseMode.Multiple;
-            } else {
-                return DatabaseMode.Single;
-            }
         }
 
         private void InitListViewSize() {
@@ -128,6 +119,10 @@ namespace MySqlDataView {
                     countSql += " where " + where;
                 }
                 try {
+                    if( string.IsNullOrWhiteSpace( DbHelperMySqL.ConnectionString ) ) {
+                        MessageBox.Show( "未选择数据库" );
+                        return;
+                    }
                     var countTask = DbHelperMySqL.GetSingleAsync( countSql );
                     var dataTask = DbHelperMySqL.QueryAsync( sql );
                     var count = Convert.ToInt32( countTask.Result.ToString() );
@@ -213,9 +208,7 @@ namespace MySqlDataView {
             if( filterItems.Count == 0 ) {
                 return wrapPannel;
             }
-            if( databaseMode == DatabaseMode.Multiple ) {
-                wrapPannel.Children.Add( NewFilterFormField( DatabaseSelectorItem() ) );
-            }
+            databaseType.AppendFilterFormFieldTo( wrapPannel, this );
             foreach( var item in filterItems ) {
                 wrapPannel.Children.Add( NewFilterFormField( item ) );
             }
@@ -224,13 +217,10 @@ namespace MySqlDataView {
             filterBtn.Content = "筛选";
             filterBtn.Width = 50;
             filterBtn.Click += delegate ( object sender, RoutedEventArgs e ) {
-                if( databaseMode == DatabaseMode.Multiple ) {
-                    var connString = WhereGenerator.GetConnectionString( wrapPannel );
-                    if( string.IsNullOrEmpty( connString ) ) {
-                        MessageBox.Show( "未选择数据库" );
-                        return;
-                    }
-                    DbHelperMySqL.ConnectionString = connString;
+                var setConnStrResult = databaseType.SetConnectionString( wrapPannel );
+                if( !setConnStrResult.Item1 ) {
+                    MessageBox.Show( setConnStrResult.Item2 );
+                    return;
                 }
                 where = WhereGenerator.GetWhere( wrapPannel );
                 var pager = Pager.Get( product, window, this );
@@ -245,37 +235,19 @@ namespace MySqlDataView {
             resetBtn.Content = "重置";
             resetBtn.Width = 50;
             resetBtn.Click += delegate ( object sender, RoutedEventArgs e ) {
-                if( databaseMode == DatabaseMode.Multiple ) {
-                    currWindow.ListView.ItemsSource = null;
-                }
+                databaseType.EmptyListView( currWindow.ListView );
+                databaseType.ResetConnectionString();
                 WhereGenerator.ClearFilterFormField( wrapPannel );
                 where = "";
                 var pager = Pager.Get( product, window, this );
                 pager.SetCurrPageIndex( 1 );
-                if( databaseMode == DatabaseMode.Single ) {
-                    pager.PageChange();
-                }
-               
+                databaseType.PageChange( pager );
             };
             wrapPannel.Children.Add( resetBtn );
             return wrapPannel;
         }
 
-        private WindowItem DatabaseSelectorItem() {
-            var contents = product.ConnectionStrings.Select( item => {
-                return new KeyVal<string, string>( item.Name, item.Value );
-            } );
-            var windowItem = new WindowItemForDatabase();
-            windowItem.Title = "数据库";
-            windowItem.Name = WindowItemForDatabase.FIELD_NAME;
-            windowItem.MatchType = WindowItemMatchType.Equals;
-            windowItem.ItemType = WindowItemType.FilterItem;
-            windowItem.DataType = WindowItemDataType.String;
-            windowItem.Contents.AddRange(contents);
-            return windowItem;
-        }
-
-        private WrapPanel NewFilterFormField( WindowItem windowItem ) {
+        public WrapPanel NewFilterFormField( WindowItem windowItem ) {
             var wrapPannel = new WrapPanel();
             var title = FormFieldFactory.TextBlock( windowItem );
             title.Style = Resources[ "FormFieldTitle" ] as Style;
@@ -329,10 +301,8 @@ namespace MySqlDataView {
             var fields = string.Join( ",", window.ListItems.Select( item => item.Name ).ToArray() );
             fields += "," + window.UniqueID;
 
-
-
             pager.OnPageChanged += delegate () {
-                if( this.databaseMode == DatabaseMode.Multiple && !currWindow.InitialLoading ) {
+                if( databaseType is DatabaseMultiple && !currWindow.InitialLoading ) {
                     return;
                 }
                 ThreadPool.QueueUserWorkItem( delegate ( object state ) {
@@ -344,6 +314,10 @@ namespace MySqlDataView {
                         whereString = where;
                     }
                     try {
+                        if( string.IsNullOrWhiteSpace( DbHelperMySqL.ConnectionString ) ) {
+                            MessageBox.Show( "未选择数据库" );
+                            return;
+                        }
                         var dataListTask = DbHelperMySqL.QueryAsync( "select " + fields + " from " + window.TableName + " where " + whereString + " order by " + sortString + " limit " + pager.GetLimit() );
                         var dataCountTask = DbHelperMySqL.GetSingleAsync( "select count(*) from " + window.TableName + " where " + whereString );
                         var dataList = dataListTask.Result;

@@ -1,18 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Threading.Tasks;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Threading;
 using System.IO;
 using WinForm = System.Windows.Forms;
 using MySqlDataView.Logic;
@@ -40,10 +30,19 @@ namespace MySqlDataView {
             LoadConfig();
             Content.MouseDoubleClick += delegate ( object sender, MouseButtonEventArgs e ) {
                 var selectItem = Content.SelectedValue as Product;
-                var content = new UIContent( selectItem, selectItem.WindowGroup );
+
+                Func<DatabaseType> judgeDatabaseType = delegate () {
+                    if( selectItem.ConnectionStrings.Count > 0 ) {
+                        return new DatabaseMultiple( selectItem );
+                    } else {
+                        return new DatabaseSingle( selectItem );
+                    }
+                };
+
+                var content = new UIContent( selectItem, selectItem.WindowGroup, judgeDatabaseType() );
                 content.Owner = this;
                 content.Show();
-                UIMain.HideWindow();
+                HideWindow();
             };
             instance = this;
         }
