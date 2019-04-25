@@ -66,6 +66,9 @@ namespace MySqlDataView {
                 treeViewItem.Header = item.Title;
                 treeViewItem.Style = Resources[ "TreeViewItem" ] as Style;
                 treeViewItem.Selected += delegate ( object sender, RoutedEventArgs e ) {
+                    //清空原有条件
+                    where = string.Empty;
+
                     SetCurrTabState( item );
 
                     TabItem tabItem;
