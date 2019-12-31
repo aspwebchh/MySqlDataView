@@ -322,9 +322,13 @@ namespace MySqlDataView {
                             return;
                         }
                         var dataListTask = DbHelperMySqL.QueryAsync( "select " + fields + " from " + window.TableName + " where " + whereString + " order by " + sortString + " limit " + pager.GetLimit() );
-                        var dataCountTask = DbHelperMySqL.GetSingleAsync( "select count(*) from " + window.TableName + " where " + whereString );
+                      
                         var dataList = dataListTask.Result;
-                        var dataCount = dataCountTask.Result;
+                        var dataCount = Int32.MaxValue;
+                        if( window.GetDataCount ) {
+                            var dataCountTask = DbHelperMySqL.GetSingleAsync( "select count(*) from " + window.TableName + " where " + whereString );
+                            dataCount = Convert.ToInt32(dataCountTask.Result);
+                        }
                         var dataTable = Data2Object.ToListDataTable( dataList.Tables[ 0 ], window );
                         var objectList = Data2Object.Convert( dataTable, window );
                         Dispatcher.Invoke( (Action)delegate () {
@@ -358,7 +362,9 @@ namespace MySqlDataView {
         }
 
         private void ToTopOnListView() {
-            currWindow.ListView.ScrollIntoView( currWindow.ListView.Items[ 0 ] );
+            if( currWindow.ListView.Items.Count > 0 ) {
+                currWindow.ListView.ScrollIntoView( currWindow.ListView.Items[ 0 ] );
+            }
         }
 
         private void FirstPageButton_Click( object sender, RoutedEventArgs e ) {

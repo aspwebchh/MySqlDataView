@@ -42,6 +42,10 @@ namespace MySqlDataView.Logic {
             get;set;
         }
 
+        public bool GetDataCount {
+            get;set;
+        }
+
         public List<WindowItem> Items {
             get;
             private set;

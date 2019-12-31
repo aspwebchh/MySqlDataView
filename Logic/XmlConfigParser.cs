@@ -144,6 +144,7 @@ namespace MySqlDataView.Logic {
             const string ATTR_SORTFIELD = "SortField";
             const string ATTR_SORTMODE = "SortMode";
             const string ATTR_UNIQUEID = "UniqueID";
+            const String ATTR_GET_DATA_COUNT = "GetDataCount";
 
             var window = new WindowObject();
 
@@ -175,6 +176,7 @@ namespace MySqlDataView.Logic {
                 var sortField = ele.GetAttribute( ATTR_SORTFIELD );
                 var sortMode = ele.GetAttribute( ATTR_SORTMODE );
                 var uniqueID = ele.GetAttribute( ATTR_UNIQUEID );
+                var getDataCount=  ele.HasAttribute( ATTR_GET_DATA_COUNT ) ? Convert.ToBoolean( ele.GetAttribute( ATTR_GET_DATA_COUNT )) : true;
                 
                 window.Title = title;
                 window.Type = WindowObject.GetType( type );
@@ -182,6 +184,8 @@ namespace MySqlDataView.Logic {
                 window.SortField = sortField;
                 window.SortMode = sortMode;
                 window.UniqueID = uniqueID;
+                window.GetDataCount = getDataCount;
+
                 if( windowElement.ChildNodes.Count == 0 ) {
                     throw new XmlConfigParseError( "Window节点必须存在子节点" );
                 }
