@@ -46,6 +46,10 @@ namespace MySqlDataView.Logic {
             get;set;
         }
 
+        public bool DefaultLoad {
+            get;set;
+        }
+
         public List<WindowItem> Items {
             get;
             private set;

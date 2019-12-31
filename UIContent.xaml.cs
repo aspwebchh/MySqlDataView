@@ -324,10 +324,16 @@ namespace MySqlDataView {
                         var dataListTask = DbHelperMySqL.QueryAsync( "select " + fields + " from " + window.TableName + " where " + whereString + " order by " + sortString + " limit " + pager.GetLimit() );
                       
                         var dataList = dataListTask.Result;
-                        var dataCount = Int32.MaxValue;
+                        var dataCount = 0;
                         if( window.GetDataCount ) {
                             var dataCountTask = DbHelperMySqL.GetSingleAsync( "select count(*) from " + window.TableName + " where " + whereString );
-                            dataCount = Convert.ToInt32(dataCountTask.Result);
+                            dataCount = Convert.ToInt32( dataCountTask.Result );
+                            pager.ShowDataCount = true;
+                            pager.ShowPageCount = true;
+                        } else {
+                            dataCount = Int32.MaxValue;
+                            pager.ShowDataCount = false;
+                            pager.ShowPageCount = false;
                         }
                         var dataTable = Data2Object.ToListDataTable( dataList.Tables[ 0 ], window );
                         var objectList = Data2Object.Convert( dataTable, window );
@@ -341,8 +347,9 @@ namespace MySqlDataView {
                     }
                 } );
             };
-
-            pager.PageChange();
+            if( window.DefaultLoad ) {
+                pager.PageChange();
+            }
             currWindow.InitialLoading = true;
 
             listView.MouseDoubleClick += delegate ( object sender, MouseButtonEventArgs e ) {

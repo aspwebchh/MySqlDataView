@@ -11,6 +11,14 @@ namespace MySqlDataView.Logic {
     public class Pager {
         private static Dictionary<string, Pager> pagerList = new Dictionary<string, Pager>();
 
+        public bool ShowDataCount {
+            get;set;
+        }
+
+        public bool ShowPageCount {
+            get;set;
+        }
+
         private static string getPagerKey( Product product, WindowObject window ) {
             var key = product.ID + "-" + window.Title;
             return key;
@@ -89,6 +97,12 @@ namespace MySqlDataView.Logic {
             uiContent.rCurrent.Text = this.currPageIndex.ToString();
             uiContent.rTotal.Text = PageCount.ToString();
             uiContent.rDataCount.Text = this.dataCount.ToString();
+            if( !ShowPageCount ) {
+                uiContent.rTotal.Text = "?";
+            }
+            if( !ShowDataCount ) {
+                uiContent.rDataCount.Text = "?";
+            }
         }
 
         public void SetCurrPageIndex( int pageIndex ) {
