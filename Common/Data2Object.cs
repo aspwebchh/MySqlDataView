@@ -35,7 +35,7 @@ namespace MySqlDataView.Common {
                     var  val = row[ name ].ToString();
                     if( col.DataType.FullName == "MySql.Data.Types.MySqlDateTime" ) {
                         DateTime dt = DateTime.Parse( val );
-                        val = dt.ToString( "yyyy-MM-dd hh:mm:ss" );
+                        val = dt.ToString( "yyyy-MM-dd HH:mm:ss" );
                     } 
                     dataItemDic[ name ] = val;
                 }
