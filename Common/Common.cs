@@ -9,6 +9,15 @@ using System.IO;
 
 namespace MySqlDataView.Common {
     class Common {
+        public static string RemoveLineBreak( string str ) {
+            if( string.IsNullOrEmpty( str ) ) {
+                return str;
+            }
+            str = str.Replace( "\n", "" );
+            str = str.Replace( "\r", "" );
+            return str;
+        }
+
         public static string GetString( string str,  int len ) {
             if( string.IsNullOrEmpty( str ) ) {
                 return "";

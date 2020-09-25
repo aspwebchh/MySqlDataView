@@ -124,6 +124,13 @@
                 </ContextMenu>
             </ListView.ContextMenu>
 
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Height" Value="auto" />
+                    <Setter Property="MinHeight" Value="30"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
@@ -139,7 +146,7 @@
                             <GridViewColumnHeader Content="值" HorizontalContentAlignment="Left" Padding="10,0,0,0" />
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock  Text="{Binding Value}"></TextBlock>
+                                    <TextBlock Text="{Binding Value}"></TextBlock>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

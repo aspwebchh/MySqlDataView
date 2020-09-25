@@ -18,7 +18,7 @@ namespace MySqlDataView.Common {
                                 row[ col.ColumnName ] = Common.FilterHtml( row[ col.ColumnName ].ToString() );
                             }
                         }
-                       // row[ col.ColumnName ] = Common.GetString( row[ col.ColumnName ].ToString(), 50 );
+                        row[ col.ColumnName ] = Common.RemoveLineBreak( row[ col.ColumnName ].ToString() );
                     }
                 }
             }
