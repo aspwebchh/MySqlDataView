@@ -78,7 +78,7 @@ namespace MySqlDataView.Logic {
 
         public static string GetWhere( FrameworkElement element ) {
             Dictionary<WindowItem, string> formFieldsData = GetFilterFormFieldResult(element);
-            var where = " 1=1 ";
+            var where = "";
             foreach( var key in formFieldsData.Keys ) {
                 if( key is WindowItemForDatabase ) {
                     continue;
@@ -87,7 +87,11 @@ namespace MySqlDataView.Logic {
                 var matchType = key.MatchType;
                 var op = GetOperator( matchType );
                 var right = matchType == WindowItemMatchType.Like ? "'%" + val + "%'" : "'" + val + "'";
-                where += " and " + key.Name  + op + right;
+                if( string.IsNullOrEmpty( where ) ) {
+                    where = key.Name + op + right;
+                } else {
+                    where += " and " + key.Name + op + right;
+                }
             }
             return where;
         }

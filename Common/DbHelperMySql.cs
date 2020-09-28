@@ -345,6 +345,9 @@ namespace MySqlDataView.Common {
         }
 
         public static Task<DataSet> QueryAsync( string SQLString ) {
+            System.Console.WriteLine( "-------------SQL--------------" );
+            System.Console.WriteLine( SQLString );
+
             return Task.Factory.StartNew( () => {
                 var result = Query( SQLString );
                 return result;
