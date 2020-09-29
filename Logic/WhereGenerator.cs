@@ -85,6 +85,15 @@ namespace MySqlDataView.Logic {
                 }
                 var val = formFieldsData [key];
                 var matchType = key.MatchType;
+                if( matchType == WindowItemMatchType.FULLTEXT ) {
+                    var fullTextCondition = "match(" + key.Name + ") AGAINST('" + val + "' in boolean  mode )";
+                    if( string.IsNullOrEmpty( where ) ) {
+                        where = fullTextCondition;
+                    } else {
+                        where += " and " + fullTextCondition;
+                    }
+                    continue;
+                }
                 var op = GetOperator( matchType );
                 var right = matchType == WindowItemMatchType.Like ? "'%" + val + "%'" : "'" + val + "'";
                 if( string.IsNullOrEmpty( where ) ) {

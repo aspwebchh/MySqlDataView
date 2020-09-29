@@ -81,6 +81,8 @@ namespace MySqlDataView.Logic {
                 return WindowItemMatchType.GT;
             } else if( matchType == "LT" ) {
                 return WindowItemMatchType.LT;
+            } else if( matchType == "FULLTEXT") {
+                return WindowItemMatchType.FULLTEXT;
             } else {
                 throw new XmlConfigParseError( "MatchType类型不存在" );
             }
