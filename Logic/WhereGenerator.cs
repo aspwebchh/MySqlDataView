@@ -94,8 +94,37 @@ namespace MySqlDataView.Logic {
                     }
                     continue;
                 }
+
+                if( matchType == WindowItemMatchType.Like ) {
+                    var subOp = "";
+                    string[] items = new string[] { val };
+                    if( val.IndexOf( "&" ) != -1 ) {
+                        items = val.Split( new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries );
+                        subOp = " and ";
+                    } else if( val.IndexOf( "|" ) != -1 ) {
+                        items = val.Split( new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries );
+                        subOp = " or ";
+                    }
+
+                   
+                    var likeWhereItems = new List<string>();
+
+                    foreach( string item in items ) {
+                        var likeWhereItem = key.Name + " like '%" + item + "%'";
+                        likeWhereItems.Add( likeWhereItem );
+                    }
+
+                    var likeWhere = " (" + String.Join( subOp, likeWhereItems ) + ") ";
+                    if( string.IsNullOrEmpty( where ) ) {
+                        where = likeWhere;
+                    } else {
+                        where += " and " + likeWhere;
+                    }
+                    continue;
+                }
+
                 var op = GetOperator( matchType );
-                var right = matchType == WindowItemMatchType.Like ? "'%" + val + "%'" : "'" + val + "'";
+                var right =  "'" + val + "'";
                 if( string.IsNullOrEmpty( where ) ) {
                     where = key.Name + op + right;
                 } else {
@@ -104,6 +133,7 @@ namespace MySqlDataView.Logic {
             }
             return where;
         }
+
 
         public static string GetConnectionString( FrameworkElement element ) {
             Dictionary<WindowItem, string> formFieldsData = GetFilterFormFieldResult( element );
